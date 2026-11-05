@@ -38,7 +38,7 @@ function buildListeningExam(n,count,pool){
   if(out.length>=count)return;
   if(used.has("p:"+p[0]))return;
   used.add("p:"+p[0]);
-  out.push(examChoice("Nghe hiểu","Nghe câu tiếng Trung rồi chọn nghĩa phù hợp.",p[2],pool.phrases.map(x=>x[2]).concat(pool.words.map(x=>x[2])),{audio:p[0],subpart:"Nghe câu / hội thoại"}));
+  out.push(examChoice("Nghe hiểu","Nghe câu tiếng Trung rồi chọn nghĩa phù hợp.",p[2],pool.phrases.map(x=>x[2]),{audio:p[0],subpart:"Nghe câu / hội thoại"}));
  });
  let words=examShuffle(pool.words);
  for(let i=0;out.length<count&&i<words.length;i++){
@@ -122,6 +122,12 @@ function buildExam(){
 function examShuffleBySection(a){
  let l=a.filter(x=>x.section==="Nghe hiểu"),r=a.filter(x=>x.section==="Đọc hiểu"),w=a.filter(x=>x.section==="Viết");
  return [...l,...r,...w];
+}
+function renderExamIntro(){
+ const cfg=HSK_EXAM_CONFIG[level],ready=levelReady(level),previous=db.examResults?.[level];
+ const sections=[cfg.listening+" câu nghe",cfg.reading+" câu đọc"];if(cfg.writing)sections.push(cfg.writing+" câu viết");
+ $("examBody").innerHTML='<div class="exam-intro"><div class="exam-topline"><span class="exam-chip">HSK 3.0 · HSK '+level+'</span><b>'+cfg.minutes+' phút</b></div><h3>Đề thi thử HSK '+level+'</h3><p>'+cfg.total+' câu · '+sections.join(" · ")+'</p><p class="muted">Bài thi có đồng hồ đếm ngược, tự nộp khi hết giờ. Kết quả được lưu trên thiết bị này.</p>'+(previous?.passed?'<p class="evaluation ok">Đã vượt cấp với '+previous.score+'% · Có thể thi lại để luyện tập.</p>':"")+(ready?'<button class="btn" id="examStart">Bắt đầu làm bài →</button>':'<button class="btn" disabled>Chưa đủ điều kiện dự thi</button><p class="muted">Hoàn thành toàn bộ từ vựng, ngữ pháp và mẫu câu HSK '+level+' tại mục Tổng quan để mở đề.</p>')+'</div>';
+ $("examStart")?.addEventListener("click",startExam);
 }
 function startExam(){
  if(!levelReady(level)){toast("Bạn cần hoàn thành nội dung HSK "+level+" trước khi thi.");return}
