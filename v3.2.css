@@ -20,3 +20,9 @@
 .cl32-gifts{display:flex;gap:7px;flex-wrap:wrap}
 .cl32-gifts .btn{flex:1;font-size:11px}
 @media(max-width:430px){.cl32-joy{width:92px;height:92px;left:8px;bottom:8px}.cl32-joy-knob{width:38px;height:38px}.cl32-actions{right:8px;bottom:13px}.cl32-action{width:43px;height:43px}.cl32-hint{max-width:48%;font-size:9px}}
+
+/* 3.4 visual polish */
+#cl32World{image-rendering:pixelated;image-rendering:crisp-edges}
+.cl32-joy{background:radial-gradient(circle at 35% 28%,#557d8bdf,#102c3bef 72%);border:2px solid #d8e8d8;box-shadow:0 5px 18px #0008,inset 0 0 0 5px #ffffff12}
+.cl32-joy-knob{box-shadow:0 3px 8px #0008,inset 0 2px 3px #fff8}
+.cl32-action{border:2px solid #f3d48b!important;box-shadow:0 4px 0 #172d38,0 5px 12px #0006!important}
