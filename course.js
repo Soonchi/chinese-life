@@ -3,7 +3,7 @@ function initCourse(){
  db.grammarDone=db.grammarDone||{};db.phraseDone=db.phraseDone||{};db.examResults=db.examResults||{};
  const max=maxUnlockedLevel();level=Math.min(Math.max(1,Number(db.level)||1),max,6);db.level=level;save();
  $("levelSelect").innerHTML=[1,2,3,4,5,6].map(n=>'<option value="'+n+'">'+n+'</option>').join("");$("levelSelect").value=level;
- renderHome();renderGrammar();renderPhrases();
+ renderHome();renderGrammar();renderPhrases();renderExamIntro();
  $("examStart")?.addEventListener("click",startExam);
  $("courseProgress")?.addEventListener("click",e=>{if(e.target.closest("[data-start-exam]"))startExam()});
 }
@@ -13,7 +13,7 @@ function levelProgress(n){
  return{words:w.filter(x=>db.words[x[0]]?.status==="known").length,wordTotal:w.length,grammar:g.filter(x=>db.grammarDone[x.i]).length,grammarTotal:g.length,phrases:p.filter(x=>db.phraseDone[x.i]).length,phraseTotal:p.length}
 }
 function levelReady(n){let p=levelProgress(n);return p.wordTotal>0&&p.words===p.wordTotal&&p.grammar===p.grammarTotal&&p.phrases===p.phraseTotal}
-function setLevel(n){if(n<1||n>maxUnlockedLevel()||n>6){toast("Hoàn thành HSK trước để mở cấp tiếp theo.");$("levelSelect").value=level;return}level=n;db.level=n;wi=0;save();$("levelSelect").value=n;renderWords();renderGrammar();renderPhrases();renderHome()}
+function setLevel(n){if(n<1||n>maxUnlockedLevel()||n>6){toast("Hoàn thành HSK trước để mở cấp tiếp theo.");$("levelSelect").value=level;return}level=n;db.level=n;wi=0;save();$("levelSelect").value=n;renderWords();renderGrammar();renderPhrases();renderHome();renderExamIntro()}
 function renderHome(){
  const unlocked=maxUnlockedLevel();
  $("levelGrid").innerHTML=Array.from({length:6},(_,i)=>{let n=i+1,p=levelProgress(n),all=p.wordTotal+p.grammarTotal+p.phraseTotal,done=p.words+p.grammar+p.phrases,pct=Math.round(done/Math.max(1,all)*100),passed=!!db.examResults?.[n]?.passed,locked=n>unlocked;return '<button class="level-tile '+(level===n?"active":"")+(locked?" locked":"")+'" data-level="'+n+'" '+(locked?"disabled":"")+'><b>'+(locked?"🔒 ":"")+'HSK '+n+(passed?" ✓":"")+'</b><span>'+pct+'% hoàn thành</span></button>'}).join("");
