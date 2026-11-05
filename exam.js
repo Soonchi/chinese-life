@@ -43,11 +43,11 @@ function buildListeningExam(n,count,pool){
  let words=examShuffle(pool.words);
  for(let i=0;out.length<count&&i<words.length;i++){
   let w=words[i];if(used.has("w:"+w[0]))continue;used.add("w:"+w[0]);
-  out.push(examChoice("Nghe hiểu","Nghe từ tiếng Trung rồi chọn nghĩa đúng.",w[2],pool.words.map(x=>x[2]),{audio:w[0],subpart:"Nghe từ vựng"}));
+  out.push(examChoice("Nghe hiểu","Nghe từ tiếng Trung rồi chọn pinyin tương ứng.",w[1],pool.words.map(x=>x[1]),{audio:w[0],subpart:"Nghe và nhận diện âm"}));
  }
  while(out.length<count&&pool.words.length){
   let w=pool.words[out.length%pool.words.length];
-  out.push(examChoice("Nghe hiểu","Nghe từ tiếng Trung rồi chọn nghĩa đúng.",w[2],pool.words.map(x=>x[2]),{audio:w[0],subpart:"Nghe từ vựng"}));
+  out.push(examChoice("Nghe hiểu","Nghe từ tiếng Trung rồi chọn pinyin tương ứng.",w[1],pool.words.map(x=>x[1]),{audio:w[0],subpart:"Nghe và nhận diện âm"}));
  }
  return examShuffle(out);
 }
@@ -60,13 +60,13 @@ function buildReadingExam(n,count,pool){
  while(out.length<count){
   if(wi<words.length&&(out.length%3!==2||gi>=grammar.length)){
    let w=words[wi++];
-   out.push(examChoice("Đọc hiểu","Chọn chữ Hán có nghĩa tương ứng: "+w[2],w[0],pool.words.map(x=>x[0]),{subpart:"Từ vựng trong ngữ cảnh"}));
+   out.push(examChoice("Đọc hiểu","Chọn chữ Hán tương ứng với pinyin: "+w[1],w[0],pool.words.map(x=>x[0]),{subpart:"Nhận diện chữ Hán"}));
   }else if(gi<grammar.length){
    let g=grammar[gi++],example=String(g[5]||"").split(/\r?\n/).filter(Boolean)[0]||g[1];
    out.push(examChoice("Đọc hiểu","Đọc ví dụ và chọn cấu trúc phù hợp:\n"+example,g[1],pool.grammar.map(x=>x[1]),{subpart:"Ngữ pháp / điền từ"}));
   }else{
    let w=pool.words[out.length%Math.max(1,pool.words.length)];
-   out.push(examChoice("Đọc hiểu","Chọn chữ Hán có nghĩa tương ứng: "+(w?.[2]||""),w?.[0]||"",pool.words.map(x=>x[0]),{subpart:"Từ vựng"}));
+   out.push(examChoice("Đọc hiểu","Chọn chữ Hán tương ứng với pinyin: "+(w?.[1]||""),w?.[0]||"",pool.words.map(x=>x[0]),{subpart:"Nhận diện chữ Hán"}));
   }
  }
  return examShuffle(out);
@@ -144,7 +144,11 @@ function examSaveCurrent(){
  const q=examQuestions[examIndex];if(!q)return;
  if(q.type==="text"){
   const el=document.getElementById("examWrittenAnswer");
-  if(el)examAnswers[examIndex]={chosen:el.value.trim(),ok:el.value.trim().replace(/\s/g,"")===q.answer.replace(/\s/g,""),manual:false};
+  if(el){const value=el.value.trim();examAnswers[examIndex]={chosen:value,ok:value.replace(/[\\s，。！？、,.!?]/g,"")===q.answer.replace(/[\\s，。！？、,.!?]/g,""),manual:false};}
+ }else if(q.type==="self"){
+  const el=document.getElementById("examWrittenAnswer");
+  if(el&&el.value.trim()&&!examAnswers[examIndex])examAnswers[examIndex]={chosen:el.value.trim(),ok:false,manual:true,assessed:false};
+  else if(el&&el.value.trim()&&examAnswers[examIndex]?.manual&&!examAnswers[examIndex]?.assessed)examAnswers[examIndex].chosen=el.value.trim();
  }
 }
 function renderExamQuestion(){
@@ -165,8 +169,8 @@ function renderExamQuestion(){
   let choice=q.options[+b.dataset.choice];examAnswers[examIndex]={chosen:choice,ok:choice===q.answer,manual:false};renderExamQuestion();
  });
  if(q.type==="self"){
-  $("examSelfPass").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}examAnswers[examIndex]={chosen:value,ok:true,manual:true};renderExamQuestion()};
-  $("examSelfFail").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}examAnswers[examIndex]={chosen:value,ok:false,manual:true};renderExamQuestion()};
+  $("examSelfPass").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}examAnswers[examIndex]={chosen:value,ok:true,manual:true,assessed:true};renderExamQuestion()};
+  $("examSelfFail").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}examAnswers[examIndex]={chosen:value,ok:false,manual:true,assessed:true};renderExamQuestion()};
  }
  $("examPrev").onclick=()=>{examSaveCurrent();if(examIndex>0){examIndex--;renderExamQuestion()}};
  $("examNext").onclick=()=>{examSaveCurrent();if(examIndex<total-1){examIndex++;renderExamQuestion()}else finishExam(false)};
