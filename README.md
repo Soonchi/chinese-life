@@ -1,24 +1,20 @@
-# Chinese Daily — HSK 1–6
+# Chinese Daily 2.0 — HSK 1–6
 
-Ứng dụng học tiếng Trung thực dụng, ưu tiên từ vựng, mẫu câu giao tiếp, nghe hiểu và phản xạ nói. Thiết kế mobile-first, có thể cài như PWA.
+Ứng dụng học tiếng Trung theo đề cương HSK 3.0 (2025), ưu tiên từ vựng, ngữ pháp, nghe hiểu và phản xạ.
 
-## Chạy ứng dụng
-- GitHub Pages: https://soonchi.github.io/chinese-life/
-- Mở bằng Chrome, Edge hoặc Safari.
-- Trên iPhone: mở link bằng Safari → Chia sẻ → Thêm vào màn hình chính.
-- Microphone và nhận diện giọng nói cần HTTPS và quyền truy cập; hỗ trợ tốt hơn trên Chrome/Edge. iOS Safari có thể giới hạn Web Speech Recognition.
+## Học liệu
+- 5.400 mục từ mới HSK 1–6: 300 / 200 / 500 / 1.000 / 1.600 / 1.800.
+- 459 điểm ngữ pháp: 70 / 78 / 96 / 95 / 70 / 50.
+- Bộ từ có chữ Hán, pinyin, từ loại và cấp độ; tùy chọn học cấp riêng hoặc cộng dồn.
+- Nghĩa tiếng Việt được tra trực tuyến theo yêu cầu và lưu trên thiết bị. Bản dịch máy chỉ là gợi ý, cần xem ngữ cảnh.
+- 30 câu hội thoại thực tế; luyện nghe 0.8x/1x/1.2x và chế độ ẩn chữ; 15 tình huống luyện phản xạ nói.
+- SpeechSynthesis và Web Speech Recognition trên trình duyệt hỗ trợ; phản xạ hiện đối chiếu từ khóa, chưa chấm phát âm/thanh điệu.
+- Lưu từ đã nhớ/chưa nhớ, XP, lịch ôn tập bằng localStorage; PWA cache dữ liệu sau lần tải đầu.
 
-## Chức năng hiện tại
-- Chọn HSK 1–6.
-- Từ vựng theo chủ đề, nghĩa, pinyin, ví dụ và phát âm zh-CN.
-- Mẫu câu giao tiếp theo tình huống.
-- Luyện nghe: nghe câu ở tốc độ 0.8x / 1x / 1.2x rồi chọn nghĩa.
-- Luyện nói: nhận diện giọng nói zh-CN và đối chiếu văn bản (không phải chấm điểm thanh điệu).
-- Đánh dấu từ chưa nhớ, ôn tập và lưu tiến độ bằng localStorage.
-- PWA cơ bản và cache nội dung để mở lại offline sau lần tải đầu.
+## Sử dụng
+- https://soonchi.github.io/chinese-life/
+- iPhone: mở bằng Safari → Chia sẻ → Thêm vào màn hình chính.
+- Microphone cần HTTPS và quyền truy cập. Chrome/Edge desktop thường hỗ trợ nhận diện tốt hơn; iOS Safari có thể hạn chế.
 
-## Lưu ý dữ liệu
-Đây là bộ nội dung khởi đầu minh họa cho cả sáu cấp độ, chưa phải danh mục từ vựng HSK đầy đủ/chính thức. Cần mở rộng và rà soát theo bộ giáo trình/chuẩn HSK mà người học chọn trước khi dùng như tài liệu ôn thi chính thức.
-
-## Công nghệ
-HTML, CSS, JavaScript thuần; không cần backend hoặc API key.
+## Chuẩn và ghi công
+Dữ liệu từ vựng và ngữ pháp được tái cấu trúc từ [profesorm/hsk30](https://github.com/profesorm/hsk30), dựa trên đề cương do Chinese Testing International công bố. Dataset theo CC BY 4.0. Ghi công: **profesorm — HSK 3.0 2026 Syllabus Dataset**; đề cương gốc thuộc Chinese Testing International. HSK 3.0 (đề cương 2025) được phân biệt với danh mục HSK 2.0 cũ.
