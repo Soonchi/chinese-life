@@ -4,9 +4,9 @@
 const scene=document.getElementById("scene");
 if(!scene||typeof state==="undefined")return;
 const W=480,H=310,T=16;
-const canvas=document.createElement("canvas");canvas.id="cl32World";canvas.width=W;canvas.height=H;
+const canvas=document.createElement("canvas");canvas.id="cl32World";canvas.width=W*2;canvas.height=H*2;
 scene.appendChild(canvas);
-const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=false;
+const ctx=canvas.getContext("2d");ctx.scale(2,2);ctx.imageSmoothingEnabled=false;
 const old=[".sun",".cloud",".farhill",".ground",".road",".tree",".building","#npcs","#player",".loclabel",".scenehint"];
 old.forEach(sel=>scene.querySelectorAll(sel).forEach(el=>el.style.display="none"));
 document.getElementById("cl31Joy")?.remove();document.querySelector(".cl31-hud")?.remove();
