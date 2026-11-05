@@ -10,7 +10,7 @@ const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=false;
 const old=[".sun",".cloud",".farhill",".ground",".road",".tree",".building","#npcs","#player",".loclabel",".scenehint"];
 old.forEach(sel=>scene.querySelectorAll(sel).forEach(el=>el.style.display="none"));
 document.getElementById("cl31Joy")?.remove();document.querySelector(".cl31-hud")?.remove();
-const cssLink=document.createElement("link");cssLink.rel="stylesheet";cssLink.href="./v3.2.css";document.head.appendChild(cssLink);
+
 const districts={
  street:{name:"Vân Hải · Khu phố",cn:"云海街道",sky:"#9ed8dc",grass:"#70aa68",path:"#d8bd87",wall:"#d99b69",roof:"#a94f46",accent:"#f3d27d",objects:[["house",65,72],["house",300,67],["tree",40,150],["tree",426,155],["lamp",235,105],["stall",180,62]],npcs:["wang"]},
  shop:{name:"Phố thương mại",cn:"商业街",sky:"#a9d8d9",grass:"#779c6a",path:"#d8bd87",wall:"#e5b47b",roof:"#bd6655",accent:"#ffe19a",objects:[["shop",68,72],["shop",305,72],["tree",30,165],["lamp",240,115],["crate",405,170]],npcs:["seller"]},
@@ -144,11 +144,11 @@ function blocked(x,y){const z=districts[zone];for(const [type,bx,by] of z.object
 function update(dt){
  const speed=105;let x=(held.right?1:0)-(held.left?1:0)+joy.dx,y=(held.down?1:0)-(held.up?1:0)+joy.dy;let len=Math.hypot(x,y);if(len>1){x/=len;y/=len}
  moving=Math.abs(x)+Math.abs(y)>.08;
- if(moving){let nx=Math.max(18,Math.min(W-18,px+x*speed*dt)),ny=Math.max(104,Math.min(H-25,py+y*speed*dt));if(!blocked(nx,py))px=nx;if(!blocked(px,ny))py=ny;walk+=dt*8;face=Math.abs(x)>Math.abs(y)?(x<0?"left":"right"):(y<0?"up":"down");state.energy=Math.max(0,state.energy-dt*.16);state.x=px/W*100;state.y=Math.max(-8,Math.min(15,(H-72-py)/2))}
+ if(moving){let nx=Math.max(18,Math.min(W-18,px+x*speed*dt)),ny=Math.max(104,Math.min(H-25,py+y*speed*dt));if(!blocked(nx,py))px=nx;if(!blocked(px,ny))py=ny;walk+=dt*8;face=Math.abs(x)>Math.abs(y)?(x<0?"left":"right"):(y<0?"up":"down");state.energy=Math.max(0,state.energy-dt*.025);state.x=px/W*100;state.y=Math.max(-8,Math.min(15,(H-72-py)/2))}
  // NPCs stroll around their home area, with small idle loops
  const arr=people[zone]||[];arr.forEach((n,i)=>{let a=npcs[n.id]||(npcs[n.id]={x:W*(n.x||70)/100,y:H-75,phase:i,dir:1});a.phase+=dt;a.x+=Math.sin(a.phase*.45)*dt*3;a.x=Math.max(45,Math.min(W-45,a.x));a.y=H-75+Math.sin(a.phase*.8)*2});
  minute=(minute+dt*2)%1440;dayTick+=dt;
- if(dayTick>2){dayTick=0;if(typeof save==="function")save()}
+ if(dayTick>2){dayTick=0;const en=document.getElementById("energy");if(en)en.textContent=Math.floor(state.energy);if(typeof stats==="function")stats();if(typeof save==="function")save()}
  updateRelation();
 }
 function loop(now){let dt=Math.min(.04,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop)}
