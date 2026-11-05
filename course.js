@@ -1,3 +1,4 @@
+db.grammarDone=db.grammarDone||{};db.phraseDone=db.phraseDone||{};db.examResults=db.examResults||{};
 function initCourse(){
  db.grammarDone=db.grammarDone||{};db.phraseDone=db.phraseDone||{};db.examResults=db.examResults||{};
  const max=maxUnlockedLevel();level=Math.min(Math.max(1,Number(db.level)||1),max,6);db.level=level;save();
