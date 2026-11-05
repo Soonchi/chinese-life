@@ -7,7 +7,7 @@ const HSK_EXAM_CONFIG={
  5:{listening:45,reading:45,writing:10,minutes:120,total:100,pass:60},
  6:{listening:50,reading:50,writing:1,minutes:135,total:101,pass:60}
 };
-let examQuestions=[],examIndex=0,examAnswers=[],examTimer=null,examSeconds=0,examFinished=false,examStartedAt=null;
+let examQuestions=[],examIndex=0,examAnswers=[],examTimer=null,examSeconds=0,examFinished=false,examStartedAt=null,examDeadline=0;
 function examShuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
 function examPick(a,n){return examShuffle(a).slice(0,Math.min(n,a.length))}
 function examUnique(a){return [...new Set(a.filter(x=>x!==undefined&&x!==null&&String(x).trim()!=="").map(String))]}
@@ -28,7 +28,7 @@ function examSelf(section,prompt,extra={}){
 function examLevelPool(n){
  return {
   words:VOCAB.filter(x=>Number(x[3])===n),
-  grammar:GRAMMAR.filter(x=>Number(x[0])===n),
+  grammar:GRAMMAR.filter(x=>Number(x[0])===n&&String(x[1]||"").trim()&&String(x[5]||"").trim()),
   phrases:PHRASES.filter(x=>Number(x[4])===n)
  };
 }
@@ -137,8 +137,9 @@ function startExam(){
 }
 function startExamClock(){
  if(examTimer)clearInterval(examTimer);
- updateExamClock();
- examTimer=setInterval(()=>{examSeconds--;updateExamClock();if(examSeconds<=0){clearInterval(examTimer);examTimer=null;finishExam(true)}},1000);
+ examDeadline=Date.now()+examSeconds*1000;
+ const tick=()=>{examSeconds=Math.max(0,Math.ceil((examDeadline-Date.now())/1000));updateExamClock();if(examSeconds<=0){clearInterval(examTimer);examTimer=null;finishExam(true)}};
+ tick();examTimer=setInterval(tick,1000);
 }
 function updateExamClock(){
  let el=document.getElementById("examClock");if(!el)return;
@@ -148,13 +149,15 @@ function updateExamClock(){
 }
 function examSaveCurrent(){
  const q=examQuestions[examIndex];if(!q)return;
+ const el=document.getElementById("examWrittenAnswer");if(!el)return;
+ const value=el.value.trim();
  if(q.type==="text"){
-  const el=document.getElementById("examWrittenAnswer");
-  if(el){const value=el.value.trim();examAnswers[examIndex]={chosen:value,ok:value.replace(/[\\s，。！？、,.!?]/g,"")===q.answer.replace(/[\\s，。！？、,.!?]/g,""),manual:false};}
+  examAnswers[examIndex]={chosen:value,ok:value.replace(/[\\s，。！？、,.!?]/g,"")===q.answer.replace(/[\\s，。！？、,.!?]/g,""),manual:false};
  }else if(q.type==="self"){
-  const el=document.getElementById("examWrittenAnswer");
-  if(el&&el.value.trim()&&!examAnswers[examIndex])examAnswers[examIndex]={chosen:el.value.trim(),ok:false,manual:true,assessed:false};
-  else if(el&&el.value.trim()&&examAnswers[examIndex]?.manual&&!examAnswers[examIndex]?.assessed)examAnswers[examIndex].chosen=el.value.trim();
+  const previous=examAnswers[examIndex];
+  if(!value){if(previous?.manual)delete examAnswers[examIndex];}
+  else if(!previous?.manual)examAnswers[examIndex]={chosen:value,ok:false,manual:true,assessed:false};
+  else if(previous.chosen!==value)examAnswers[examIndex]={chosen:value,ok:false,manual:true,assessed:false};
  }
 }
 function renderExamQuestion(){
