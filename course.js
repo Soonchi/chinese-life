@@ -4,7 +4,6 @@ function initCourse(){
  const max=maxUnlockedLevel();level=Math.min(Math.max(1,Number(db.level)||1),max,6);db.level=level;save();
  $("levelSelect").innerHTML=[1,2,3,4,5,6].map(n=>'<option value="'+n+'">'+n+'</option>').join("");$("levelSelect").value=level;
  renderHome();renderGrammar();renderPhrases();renderExamIntro();
- $("examStart")?.addEventListener("click",startExam);
  $("courseProgress")?.addEventListener("click",e=>{if(e.target.closest("[data-start-exam]"))startExam()});
 }
 function maxUnlockedLevel(){let n=1;for(let i=1;i<=6;i++){if(db.examResults?.[i]?.passed)n=i+1;else break}return Math.min(6,n)}
