@@ -97,7 +97,7 @@ function interact(){
  try{talk(n.id)}catch(e){toast("NPC này chưa có hội thoại trong bản hiện tại.")}
  updateRelation();
 }
-function updateRelation(){const n=nearest();let h=document.getElementById("cl32Hint");if(h)h.textContent=n?"💬 Nhấn Tương tác: "+n.name:"🕹️ Khám phá bản đồ và tìm NPC"}
+function updateRelation(){const n=nearest();let h=document.getElementById("cl32Hint");if(h){let v=n?"💬 Nhấn Tương tác: "+n.name:"🕹️ Khám phá bản đồ và tìm NPC";if(h.textContent!==v)h.textContent=v}}
 function switchZone(p){
  if(!districts[p])return;
  zone=p;state.place=p;px=235;py=H-72;state.x=49;state.y=0;
@@ -140,10 +140,11 @@ function joyMove(e){const r=document.getElementById("cl32Joy").getBoundingClient
 function joyStop(){joy.on=false;joy.dx=joy.dy=0;const k=document.getElementById("cl32Knob");if(k)k.style.transform="translate(0,0)"}
 function keyDown(e){const map={ArrowLeft:"left",a:"left",A:"left",ArrowRight:"right",d:"right",D:"right",ArrowUp:"up",w:"up",W:"up",ArrowDown:"down",s:"down",S:"down"};if(map[e.key]){held[map[e.key]]=true;e.preventDefault()}if(e.key===" "||e.key==="Enter"){if(!document.getElementById("modalback").classList.contains("show"))interact()}}
 function keyUp(e){const map={ArrowLeft:"left",a:"left",A:"left",ArrowRight:"right",d:"right",D:"right",ArrowUp:"up",w:"up",W:"up",ArrowDown:"down",s:"down",S:"down"};if(map[e.key])held[map[e.key]]=false}
+function blocked(x,y){const z=districts[zone];for(const [type,bx,by] of z.objects){let w=type==="school"?205:type==="tower"?75:["tree","lamp","lantern"].includes(type)?28:["pond"].includes(type)?125:["bench","table","crate"].includes(type)?42:88;let h=type==="school"?104:type==="tower"?166:["tree","lamp","lantern"].includes(type)?42:type==="pond"?58:82;if(type==="flower")continue;if(x>bx-15&&x<bx+w+15&&y>by-12&&y<by+h+12)return true}return false}
 function update(dt){
  const speed=105;let x=(held.right?1:0)-(held.left?1:0)+joy.dx,y=(held.down?1:0)-(held.up?1:0)+joy.dy;let len=Math.hypot(x,y);if(len>1){x/=len;y/=len}
  moving=Math.abs(x)+Math.abs(y)>.08;
- if(moving){px=Math.max(18,Math.min(W-18,px+x*speed*dt));py=Math.max(104,Math.min(H-25,py+y*speed*dt));walk+=dt*8;face=Math.abs(x)>Math.abs(y)?(x<0?"left":"right"):(y<0?"up":"down");state.energy=Math.max(0,state.energy-dt*.16);state.x=px/W*100;state.y=Math.max(-8,Math.min(15,(H-72-py)/2))}
+ if(moving){let nx=Math.max(18,Math.min(W-18,px+x*speed*dt)),ny=Math.max(104,Math.min(H-25,py+y*speed*dt));if(!blocked(nx,py))px=nx;if(!blocked(px,ny))py=ny;walk+=dt*8;face=Math.abs(x)>Math.abs(y)?(x<0?"left":"right"):(y<0?"up":"down");state.energy=Math.max(0,state.energy-dt*.16);state.x=px/W*100;state.y=Math.max(-8,Math.min(15,(H-72-py)/2))}
  // NPCs stroll around their home area, with small idle loops
  const arr=people[zone]||[];arr.forEach((n,i)=>{let a=npcs[n.id]||(npcs[n.id]={x:W*(n.x||70)/100,y:H-75,phase:i,dir:1});a.phase+=dt;a.x+=Math.sin(a.phase*.45)*dt*3;a.x=Math.max(45,Math.min(W-45,a.x));a.y=H-75+Math.sin(a.phase*.8)*2});
  minute=(minute+dt*2)%1440;dayTick+=dt;
@@ -154,8 +155,9 @@ function loop(now){let dt=Math.min(.04,(now-last)/1000);last=now;update(dt);rend
 // Keep existing navigation buttons, but make each one switch the pixel-art district.
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>switchZone(b.dataset.place));
 document.querySelectorAll("[data-move]").forEach(b=>{b.onclick=()=>{let d=b.dataset.move;held[d]=true;setTimeout(()=>held[d]=false,170)}});
-document.addEventListener("keydown",keyDown);document.addEventListener("keyup",keyUp);
+document.addEventListener("keydown",keyDown,true);document.addEventListener("keyup",keyUp,true);
 window.addEventListener("blur",()=>Object.keys(held).forEach(k=>held[k]=false));
+canvas.addEventListener("pointerdown",e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;const n=npcList().sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0];if(n&&Math.hypot(n.x-x,n.y-y)<34){px=n.x-20;py=n.y;interact()}});
 buildControls();
 switchZone(zone);
 requestAnimationFrame(loop);
