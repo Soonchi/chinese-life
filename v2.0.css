@@ -10,3 +10,18 @@
 .exam-breakdown{display:grid;gap:8px;text-align:left;margin:20px 0}
 .exam-breakdown div{display:flex;justify-content:space-between;padding:10px 12px;background:var(--soft,#f4f6fb);border-radius:10px;gap:10px}
 #examBody h3{white-space:pre-line;line-height:1.6}
+
+.exam-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0}
+.exam-topline>b{font-variant-numeric:tabular-nums;font-size:20px;padding:6px 12px;border-radius:10px;background:#edf2ff;color:#24498f}
+.exam-topline>b.urgent{background:#fff0f1;color:#bd3e4d}
+.exam-chip{font-size:12px;font-weight:800;color:#365fce;background:#edf2ff;border-radius:20px;padding:7px 11px}
+.exam-prompt{white-space:pre-line;line-height:1.75;margin:20px 0}
+.exam-answers .answer-option.selected{border:2px solid var(--blue);background:var(--soft);font-weight:800}
+.exam-writing{width:100%;min-height:100px;margin:12px 0;resize:vertical}
+.exam-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0;flex-wrap:wrap}
+.exam-footer button:disabled{opacity:.4;cursor:not-allowed}
+.exam-jump{display:flex;gap:5px;flex-wrap:wrap;margin:18px 0}
+.exam-jump button{width:31px;height:31px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);font-size:12px}
+.exam-jump button.current{border:2px solid var(--blue);color:var(--blue);font-weight:800}
+.exam-jump button.answered{background:#e8f7f0;border-color:#a9dbc8;color:#167956}
+@media(max-width:520px){.exam-footer{justify-content:space-between}.exam-footer .muted{display:none}.exam-jump button{width:28px;height:28px}}
