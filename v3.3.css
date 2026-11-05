@@ -1,0 +1,51 @@
+/* Chinese Life 3.3 — controller-first RPG HUD */
+:root{--cl33-ink:#eaf4ed;--cl33-glass:rgba(13,31,42,.88);--cl33-line:rgba(255,255,255,.16);--cl33-gold:#f2c56f}
+body{background:#091720!important}
+.app{width:min(100%,980px)!important;min-height:100dvh!important;height:100dvh!important;background:#0d202a!important;position:relative;box-shadow:0 0 50px #0009}
+.app>header,.app>.content,.app>.footer{display:none!important}
+.scene-wrap{padding:0!important;flex:1;min-height:0;display:flex}
+.scene{height:100%!important;min-height:360px;flex:1;border:0!important;border-radius:0!important;position:relative;overflow:hidden}
+#cl32World{image-rendering:pixelated}
+#cl33Hud{position:absolute;z-index:24;top:12px;left:12px;right:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none}
+.cl33-playercard,.cl33-zonecard{background:var(--cl33-glass);border:1px solid var(--cl33-line);border-radius:13px;color:var(--cl33-ink);backdrop-filter:blur(12px);box-shadow:0 5px 18px #0004;padding:9px 12px;pointer-events:auto}
+.cl33-playercard{min-width:150px}.cl33-playername{font-size:12px;font-weight:900;letter-spacing:.5px}.cl33-meta{font-size:10px;color:#c7d8d2;margin-top:3px}.cl33-xp{height:4px;background:#ffffff28;border-radius:9px;margin-top:7px;overflow:hidden}.cl33-xp span{display:block;height:100%;background:var(--cl33-gold);width:0}
+.cl33-zonecard{font-size:11px;font-weight:800;max-width:46%;text-align:right}
+#cl33Dock{position:relative;z-index:28;display:flex;justify-content:center;gap:clamp(5px,1.4vw,13px);padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#102b37,#091923);border-top:1px solid #ffffff19}
+.cl33-dockbtn{width:clamp(46px,7vw,62px);height:clamp(46px,7vw,62px);border:1px solid #ffffff2a;border-radius:15px;background:linear-gradient(145deg,#294b59,#173441);color:#f4f3df;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:20px;box-shadow:0 4px 0 #07141b;cursor:pointer;touch-action:manipulation}
+.cl33-dockbtn small{font-size:9px;font-weight:800;letter-spacing:.2px}.cl33-dockbtn.active,.cl33-dockbtn:active{background:linear-gradient(145deg,#b9873f,#79552d);transform:translateY(2px);box-shadow:0 2px 0 #07141b}
+#cl33Drawer{position:absolute;z-index:27;left:10px;right:10px;bottom:calc(82px + env(safe-area-inset-bottom));max-width:640px;margin:auto;background:rgba(12,29,39,.96);border:1px solid #ffffff2b;border-radius:18px;padding:13px;color:#edf5ed;box-shadow:0 12px 40px #0009;backdrop-filter:blur(16px);display:none;max-height:min(55dvh,440px);overflow:auto}
+#cl33Drawer.open{display:block;animation:cl33-rise .16s ease-out}
+@keyframes cl33-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cl33-drawerhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-weight:900;font-size:14px}.cl33-close{border:0;background:#ffffff18;color:white;border-radius:9px;width:32px;height:32px;font-size:17px}
+.cl33-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cl33-action{min-height:76px;border:1px solid #ffffff1d;border-radius:12px;background:#1b3946;color:#f2f2e5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:21px;cursor:pointer}
+.cl33-action span{font-size:11px;font-weight:800}
+.cl33-action:active{background:#795b36}
+.cl33-statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
+.cl33-stat{background:#ffffff0d;border:1px solid #ffffff17;border-radius:10px;padding:9px}.cl33-stat b{display:block;color:#f4cb78;font-size:16px}.cl33-stat small{font-size:10px;color:#bfd0c9}
+.cl33-tip{font-size:11px;color:#b8cbc4;line-height:1.5;margin-top:10px}
+.cl32-joy{width:112px!important;height:112px!important;left:16px!important;bottom:16px!important}
+.cl32-actions{right:16px!important;bottom:18px!important}
+.cl32-hint{bottom:13px!important;max-width:42%!important}
+#cl32Interact,#cl32Relation{width:52px!important;height:52px!important}
+#modalback{z-index:60}
+.toast{z-index:80}
+@media(max-width:600px){
+ .app{width:100%!important}
+ .scene{min-height:0;height:100%!important}
+ #cl33Hud{top:8px;left:8px;right:8px}
+ .cl33-playercard{padding:7px 9px;min-width:126px}.cl33-playername{font-size:11px}.cl33-meta{font-size:9px}
+ .cl33-zonecard{font-size:9px;padding:8px;max-width:42%}
+ #cl33Dock{gap:5px;padding:7px 6px calc(8px + env(safe-area-inset-bottom))}
+ .cl33-dockbtn{width:clamp(42px,13vw,54px);height:49px;border-radius:12px;font-size:18px}
+ .cl33-dockbtn small{font-size:8px}
+ #cl33Drawer{left:7px;right:7px;bottom:calc(67px + env(safe-area-inset-bottom));padding:11px;max-height:52dvh}
+ .cl33-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .cl33-action{min-height:66px;font-size:19px}.cl33-action span{font-size:10px}
+ .cl32-joy{width:92px!important;height:92px!important;left:10px!important;bottom:10px!important}
+ .cl32-joy-knob{width:38px!important;height:38px!important}
+ .cl32-actions{right:10px!important;bottom:12px!important}
+ .cl32-action{width:44px!important;height:44px!important}
+ .cl32-hint{bottom:6px!important;max-width:46%!important;font-size:9px!important}
+}
+@media(min-width:700px){.scene{min-height:420px}.cl32-joy{width:124px!important;height:124px!important}.cl32-joy-knob{width:48px!important;height:48px!important}}
