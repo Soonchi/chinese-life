@@ -43,27 +43,40 @@ function drawBase(z){
  ctx.fillStyle="#ffffff35";for(let x=0;x<W;x+=32)ctx.fillRect(x,237,16,2);
  ctx.fillStyle="#b69b6b";ctx.fillRect(211,90,3,220);ctx.fillRect(266,90,3,220);
 }
-function drawTree(x,y){ctx.fillStyle="#79533b";ctx.fillRect(x+10,y+19,8,22);ctx.fillStyle="#326e4c";ctx.fillRect(x+2,y+3,25,22);ctx.fillStyle="#4d9157";ctx.fillRect(x+7,y-3,16,17);ctx.fillStyle="#75ae64";ctx.fillRect(x+9,y+2,6,5)}
+function drawTree(x,y){
+ ctx.fillStyle="#00000020";ctx.fillRect(x+2,y+37,30,5);
+ ctx.fillStyle="#76513a";ctx.fillRect(x+13,y+19,9,25);ctx.fillStyle="#9a6b45";ctx.fillRect(x+15,y+21,3,18);
+ ctx.fillStyle="#315d43";ctx.fillRect(x+2,y+12,31,19);ctx.fillRect(x+7,y+4,23,18);ctx.fillRect(x+12,y-2,14,14);
+ ctx.fillStyle="#427e50";ctx.fillRect(x+5,y+8,22,18);ctx.fillRect(x+10,y+1,17,17);ctx.fillRect(x+1,y+17,12,10);
+ ctx.fillStyle="#6eaa60";ctx.fillRect(x+9,y+5,7,7);ctx.fillRect(x+20,y+11,7,6);ctx.fillRect(x+5,y+19,6,5);
+ ctx.fillStyle="#a6c96d";ctx.fillRect(x+12,y+4,3,3);ctx.fillRect(x+23,y+13,3,3);
+}
 function drawBuilding(o,z){
  let [type,x,y]=o;
  if(type==="tree"){drawTree(x,y);return}
- if(type==="pond"){ctx.fillStyle="#5caeb7";ctx.fillRect(x,y,125,58);ctx.fillStyle="#a5e0d8";ctx.fillRect(x+9,y+8,38,3);ctx.fillRect(x+72,y+29,30,3);ctx.fillStyle="#f4b6c5";ctx.fillRect(x+49,y+15,9,5);return}
- if(type==="flower"){for(let i=0;i<7;i++){ctx.fillStyle=i%2?"#e9a7bc":"#f6d67e";ctx.fillRect(x+i*12,y+(i%2)*8,5,5)}return}
- if(type==="bench"){ctx.fillStyle="#704d39";ctx.fillRect(x,y+13,40,6);ctx.fillRect(x+3,y+5,34,7);ctx.fillRect(x+5,y+19,4,9);ctx.fillRect(x+31,y+19,4,9);return}
- if(type==="lamp"||type==="lantern"){ctx.fillStyle="#514b43";ctx.fillRect(x+9,y,4,45);ctx.fillStyle=z.accent;ctx.fillRect(x+4,y-4,14,13);ctx.fillStyle="#fff3b3";ctx.fillRect(x+8,y,6,5);return}
- if(type==="table"||type==="crate"){ctx.fillStyle="#a66a43";ctx.fillRect(x,y+12,38,8);ctx.fillRect(x+4,y+20,5,12);ctx.fillRect(x+29,y+20,5,12);return}
- let w=type==="tower"?75:type==="school"?205:88,h=type==="tower"?166:type==="school"?104:82;
- ctx.fillStyle="#00000025";ctx.fillRect(x+6,y+h,w,h===166?4:5);
+ if(type==="pond"){ctx.fillStyle="#00000025";ctx.fillRect(x+4,y+48,125,9);ctx.fillStyle="#397e8b";ctx.fillRect(x,y+5,125,54);ctx.fillStyle="#58aeb8";ctx.fillRect(x+3,y+2,119,48);ctx.fillStyle="#8bd4d1";ctx.fillRect(x+10,y+10,40,4);ctx.fillRect(x+72,y+29,37,3);ctx.fillStyle="#f4b6c5";ctx.fillRect(x+49,y+15,9,5);ctx.fillRect(x+52,y+12,3,3);ctx.fillStyle="#4c8f73";ctx.fillRect(x+47,y+22,13,2);return}
+ if(type==="flower"){for(let i=0;i<7;i++){let fx=x+i*12,fy=y+(i%2)*8;ctx.fillStyle="#4f8b52";ctx.fillRect(fx+2,fy+5,2,9);ctx.fillStyle=i%2?"#e9a7bc":"#f6d67e";ctx.fillRect(fx,fy,6,5);ctx.fillRect(fx+2,fy-2,3,3);ctx.fillStyle="#f7edc0";ctx.fillRect(fx+2,fy+1,2,2)}return}
+ if(type==="bench"){ctx.fillStyle="#00000022";ctx.fillRect(x+2,y+27,42,4);ctx.fillStyle="#64432f";ctx.fillRect(x+3,y+18,4,12);ctx.fillRect(x+34,y+18,4,12);ctx.fillStyle="#9d6740";ctx.fillRect(x,y+12,42,7);ctx.fillStyle="#c18a55";ctx.fillRect(x+2,y+5,38,8);ctx.fillStyle="#e0b477";ctx.fillRect(x+5,y+7,31,2);return}
+ if(type==="lamp"||type==="lantern"){ctx.fillStyle="#514b43";ctx.fillRect(x+9,y+5,4,43);ctx.fillStyle="#342f2c";ctx.fillRect(x+4,y+1,14,4);ctx.fillStyle="#8c5540";ctx.fillRect(x+3,y-7,16,13);ctx.fillStyle=z.accent;ctx.fillRect(x+5,y-5,12,9);ctx.fillStyle="#fff5c8";ctx.fillRect(x+8,y-3,5,5);ctx.fillStyle="#d8ad55";ctx.fillRect(x+7,y+7,8,2);return}
+ if(type==="table"||type==="crate"){ctx.fillStyle="#00000022";ctx.fillRect(x+2,y+27,40,4);ctx.fillStyle="#865638";ctx.fillRect(x+2,y+12,38,19);ctx.fillStyle="#b87a49";ctx.fillRect(x,y+8,42,7);ctx.fillStyle="#d59a5d";ctx.fillRect(x+3,y+10,35,3);ctx.fillStyle="#805136";ctx.fillRect(x+7,y+16,2,12);ctx.fillRect(x+31,y+16,2,12);return}
+ let w=type==="tower"?75:type==="school"?205:type==="stall"?92:88;
+ let h=type==="tower"?166:type==="school"?104:type==="stall"?72:82;
+ ctx.fillStyle="#263c382c";ctx.fillRect(x+7,y+h,w,h===166?7:8);
+ ctx.fillStyle="#8a6950";ctx.fillRect(x-3,y+h-8,w+6,9);
  ctx.fillStyle=z.wall;ctx.fillRect(x,y,w,h);
+ ctx.fillStyle="#ffffff28";ctx.fillRect(x+3,y+3,5,h-12);ctx.fillStyle="#00000016";ctx.fillRect(x+w-6,y+4,6,h-12);
+ ctx.fillStyle="#b88960";for(let yy=y+34;yy<y+h-8;yy+=22)ctx.fillRect(x+2,yy,w-4,2);
+ ctx.fillStyle="#f0d4a5";ctx.fillRect(x+8,y+7,3,h-17);ctx.fillRect(x+w-11,y+7,3,h-17);
  ctx.fillStyle=z.roof;
- if(type==="tower"){ctx.fillRect(x-5,y-8,w+10,10);ctx.fillRect(x+12,y-20,w-24,12);ctx.fillStyle="#9fd4d9";for(let r=0;r<5;r++)for(let c=0;c<3;c++)ctx.fillRect(x+12+c*19,y+12+r*25,10,13)}
- else{ctx.fillRect(x-8,y-14,w+16,16);ctx.fillRect(x+8,y-21,w-16,8)}
- ctx.fillStyle="#91cbd0";for(let c=0;c<(type==="school"?5:2);c++){ctx.fillRect(x+10+c*(type==="school"?37:36),y+23,17,19);ctx.fillStyle="#fff2c4";ctx.fillRect(x+17+c*(type==="school"?37:36),y+23,3,19);ctx.fillStyle="#91cbd0"}
- ctx.fillStyle="#79513d";ctx.fillRect(x+w/2-8,y+h-27,16,27);
- ctx.fillStyle=z.accent;ctx.fillRect(x+w/2-16,y+5,32,12);
- ctx.fillStyle="#513b32";ctx.font="bold 8px monospace";ctx.textAlign="center";ctx.fillText(type==="school"?"学  院":type==="tower"?"云海":type==="stall"?"小吃店":type==="shop"?"便利店":"民  居",x+w/2,y+14);
+ if(type==="tower"){ctx.fillRect(x-5,y-8,w+10,12);ctx.fillRect(x+10,y-20,w-20,14);ctx.fillRect(x+23,y-27,w-46,8);ctx.fillStyle="#e4a66e";for(let k=0;k<5;k++)ctx.fillRect(x-2+k*16,y-6,9,2)}
+ else{ctx.fillRect(x-9,y-13,w+18,15);ctx.fillRect(x-5,y-17,w+10,5);ctx.fillStyle="#d98b61";for(let k=0;k<w;k+=13)ctx.fillRect(x+k,y-12,2,10)}
+ const count=type==="school"?5:type==="tower"?3:2;
+ for(let c=0;c<count;c++){let wx=x+(type==="school"?13+c*37:type==="tower"?12+c*20:10+c*37),wy=y+(type==="tower"?13:25);ctx.fillStyle="#775642";ctx.fillRect(wx-3,wy-3,23,26);ctx.fillStyle="#8ed1dc";ctx.fillRect(wx,wy,17,20);ctx.fillStyle="#d8f2e8";ctx.fillRect(wx+2,wy+2,5,5);ctx.fillStyle="#4e8290";ctx.fillRect(wx+8,wy,2,20);ctx.fillRect(wx,wy+9,17,2);ctx.fillStyle="#f4d7a2";ctx.fillRect(wx-4,wy+20,25,3)}
+ ctx.fillStyle="#78503b";ctx.fillRect(x+w/2-10,y+h-31,20,31);ctx.fillStyle="#b77d50";ctx.fillRect(x+w/2-7,y+h-28,14,25);ctx.fillStyle="#46372f";ctx.fillRect(x+w/2-1,y+h-15,2,2);ctx.fillStyle="#e7c78d";ctx.fillRect(x+w/2-13,y+h-3,26,3);
+ ctx.fillStyle=type==="tower"?"#d7e3e1":"#f7e1ae";ctx.fillRect(x+w/2-20,y+5,40,15);ctx.strokeStyle="#80533e";ctx.lineWidth=1;ctx.strokeRect(x+w/2-20,y+5,40,15);ctx.fillStyle="#513b32";ctx.font="bold 8px monospace";ctx.textAlign="center";ctx.fillText(type==="school"?"学 院":type==="tower"?"云海":type==="stall"?"小吃店":type==="shop"?"便利店":"民 居",x+w/2,y+16);
+ if(type==="stall"){ctx.fillStyle="#f3d17d";ctx.fillRect(x-3,y+27,w+6,9);for(let k=0;k<7;k++){ctx.fillStyle=k%2?"#fff0c4":"#c95f4f";ctx.fillRect(x-3+k*14,y+27,14,9)}ctx.fillStyle="#80533e";ctx.fillRect(x+7,y+47,w-14,17);ctx.fillStyle="#f2c56f";ctx.fillRect(x+11,y+50,w-22,3)}
 }
-function drawSprite(x,y,color,step,isPlayer=false,name="",npcId=""){
+function drawSpriteBase(x,y,color,step,isPlayer=false,name="",npcId=""){
  const bob=step?Math.sin(walk*10)*1.8:0;y+=bob;
  const p=isPlayer?{skin:"#f1c49f",hair:"#342b2b",shirt:"#2d7892",coat:"#f0b85f",pants:"#344b5b",shoe:"#27343a",style:"traveler"}:({
  wang:{skin:"#f0bd98",hair:"#292b35",shirt:"#5c8fc0",coat:"#e5f0f5",pants:"#34485e",shoe:"#293541",style:"hood"},
@@ -105,6 +118,11 @@ function drawSprite(x,y,color,step,isPlayer=false,name="",npcId=""){
  rect(-12,-8,2,13,"#382f31");rect(10,-8,2,13,"#382f31");
  if(name){ctx.font="bold 9px monospace";ctx.textAlign="center";const width=ctx.measureText(name).width+12;ctx.fillStyle="#fff9e9";ctx.fillRect(x-width/2,y-31,width,14);ctx.strokeStyle="#294858";ctx.lineWidth=1;ctx.strokeRect(x-width/2,y-31,width,14);ctx.fillStyle="#294858";ctx.fillText(name,x,y-21)}
 }
+function drawSprite(x,y,color,step,isPlayer=false,name="",npcId=""){
+ ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(1.32,1.32);
+ drawSpriteBase(0,0,color,step,isPlayer,name,npcId);ctx.restore();
+}
+
 function drawHud(){
  ctx.fillStyle="#183342d9";ctx.fillRect(8,8,190,31);ctx.fillStyle="#fff";ctx.font="bold 11px monospace";ctx.textAlign="left";ctx.fillText(districts[zone].name,15,21);ctx.fillStyle="#d8c18d";ctx.font="10px monospace";ctx.fillText(districts[zone].cn,15,33);
  const list=npcList();if(list.length){let n=list[0],bond=relation(n.id);ctx.fillStyle="#183342d9";ctx.fillRect(W-143,8,135,34);ctx.fillStyle="#fff";ctx.font="bold 9px monospace";ctx.fillText("♥ "+n.name+"  "+bond+"/100",W-137,21);ctx.fillStyle="#d8c18d";ctx.fillText("NPC · "+scheduleLabel(n.id),W-137,33)}
