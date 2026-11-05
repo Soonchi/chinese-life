@@ -1,54 +1,8 @@
 const $=id=>document.getElementById(id),KEY="chinese_daily_v2";
 let db={};try{db=JSON.parse(localStorage.getItem(KEY)||"{}")}catch{};db.words=db.words||{};db.xp=db.xp||0;
 let VOCAB=[],GRAMMAR=[],MEANINGS=new Map(),level=Number(db.level)||1,filtered=[],wi=0,current=null,phrase=null,dialog=null,answered=false;
-const PHRASES=[
-["你好，很高兴认识你。","Nǐ hǎo, hěn gāoxìng rènshi nǐ.","Xin chào, rất vui được làm quen với bạn.","Chào hỏi",1],
-["请问，洗手间在哪里？","Qǐngwèn, xǐshǒujiān zài nǎlǐ?","Xin hỏi nhà vệ sinh ở đâu?","Di chuyển",1],
-["这个多少钱？可以便宜一点儿吗？","Zhège duōshao qián? Kěyǐ piányi yìdiǎnr ma?","Cái này bao nhiêu tiền? Có thể rẻ hơn một chút không?","Mua sắm",1],
-["我想点一份米饭和一杯茶。","Wǒ xiǎng diǎn yí fèn mǐfàn hé yì bēi chá.","Tôi muốn gọi một phần cơm và một cốc trà.","Ăn uống",1],
-["不好意思，我来晚了。","Bù hǎoyìsi, wǒ lái wǎn le.","Xin lỗi, tôi đến muộn.","Công việc",2],
-["你能再说一遍吗？我没听清楚。","Nǐ néng zài shuō yí biàn ma? Wǒ méi tīng qīngchu.","Bạn có thể nói lại lần nữa không? Tôi chưa nghe rõ.","Giao tiếp",2],
-["我在越南工作，正在学习中文。","Wǒ zài Yuènán gōngzuò, zhèngzài xuéxí Zhōngwén.","Tôi làm việc ở Việt Nam và đang học tiếng Trung.","Giới thiệu",2],
-["如果有问题，请及时通知我。","Rúguǒ yǒu wèntí, qǐng jíshí tōngzhī wǒ.","Nếu có vấn đề, hãy thông báo cho tôi kịp thời.","Công việc",3],
-["我们先检查设备，然后再开始生产。","Wǒmen xiān jiǎnchá shèbèi, ránhòu zài kāishǐ shēngchǎn.","Chúng ta kiểm tra thiết bị trước, sau đó mới bắt đầu sản xuất.","Nhà máy",3],
-["这个产品的质量符合要求吗？","Zhège chǎnpǐn de zhìliàng fúhé yāoqiú ma?","Chất lượng sản phẩm này có đạt yêu cầu không?","Nhà máy",3],
-["我觉得这个方案更合适。","Wǒ juéde zhège fāng'àn gèng héshì.","Tôi thấy phương án này phù hợp hơn.","Ý kiến",3],
-["由于机器出现故障，生产暂时停止了。","Yóuyú jīqì chūxiàn gùzhàng, shēngchǎn zànshí tíngzhǐ le.","Do máy móc xảy ra sự cố nên sản xuất tạm thời dừng lại.","Nhà máy",4],
-["请把今天的工作进度整理成报告。","Qǐng bǎ jīntiān de gōngzuò jìndù zhěnglǐ chéng bàogào.","Hãy tổng hợp tiến độ công việc hôm nay thành báo cáo.","Công việc",4],
-["我们需要进一步确认原因，避免类似问题再次发生。","Wǒmen xūyào jìnyíbù quèrèn yuányīn, bìmiǎn lèisì wèntí zàicì fāshēng.","Chúng ta cần xác nhận thêm nguyên nhân để tránh vấn đề tương tự xảy ra lần nữa.","Nhà máy",5],
-["从长远来看，提高效率和保证质量同样重要。","Cóng chángyuǎn lái kàn, tígāo xiàolǜ hé bǎozhèng zhìliàng tóngyàng zhòngyào.","Xét về lâu dài, nâng cao hiệu suất và đảm bảo chất lượng đều quan trọng như nhau.","Công việc",5],
-["面对突发情况，首先要保持冷静，再采取适当措施。","Miànduì tūfā qíngkuàng, shǒuxiān yào bǎochí lěngjìng, zài cǎiqǔ shìdàng cuòshī.","Khi đối mặt tình huống bất ngờ, trước tiên phải bình tĩnh rồi thực hiện biện pháp thích hợp.","Tình huống",6],
-["这项改革的意义不仅在于提高效率，更在于推动长期发展。","Zhè xiàng gǎigé de yìyì bùjǐn zàiyú tígāo xiàolǜ, gèng zàiyú tuīdòng chángqī fāzhǎn.","Ý nghĩa của cải cách không chỉ ở nâng cao hiệu suất mà còn thúc đẩy phát triển lâu dài.","Ý kiến",6],
-["我想预约明天下午三点的时间。","Wǒ xiǎng yùyuē míngtiān xiàwǔ sān diǎn de shíjiān.","Tôi muốn đặt lịch vào 3 giờ chiều mai.","Cuộc sống",2],
-["请问最近的地铁站怎么走？","Qǐngwèn zuìjìn de dìtiězhàn zěnme zǒu?","Xin hỏi đi đến ga tàu điện gần nhất như thế nào?","Di chuyển",2],
-["我对这个岗位很感兴趣，可以介绍一下工作内容吗？","Wǒ duì zhège gǎngwèi hěn gǎn xìngqù, kěyǐ jièshào yíxià gōngzuò nèiróng ma?","Tôi quan tâm vị trí này, có thể giới thiệu nội dung công việc không?","Công việc",4],
-["这批材料的数量和规格都需要重新核对。","Zhè pī cáiliào de shùliàng hé guīgé dōu xūyào chóngxīn héduì.","Số lượng và quy cách của lô vật liệu này đều cần đối chiếu lại.","Nhà máy",4],
-["如果身体不舒服，应该及时休息并寻求帮助。","Rúguǒ shēntǐ bù shūfu, yīnggāi jíshí xiūxi bìng xúnqiú bāngzhù.","Nếu cảm thấy không khỏe, nên nghỉ ngơi và tìm sự trợ giúp kịp thời.","Sức khỏe",3],
-["我理解你的想法，不过我有一个不同的看法。","Wǒ lǐjiě nǐ de xiǎngfǎ, búguò wǒ yǒu yí ge bùtóng de kànfǎ.","Tôi hiểu suy nghĩ của bạn, tuy nhiên tôi có quan điểm khác.","Ý kiến",4],
-["麻烦你把文件发给我，我确认以后回复你。","Máfan nǐ bǎ wénjiàn fā gěi wǒ, wǒ quèrèn yǐhòu huífù nǐ.","Phiền bạn gửi tài liệu cho tôi, xác nhận xong tôi sẽ phản hồi.","Công việc",3],
-["即使遇到困难，我们也应该尽力完成任务。","Jíshǐ yùdào kùnnan, wǒmen yě yīnggāi jìnlì wánchéng rènwu.","Cho dù gặp khó khăn, chúng ta cũng nên cố gắng hoàn thành nhiệm vụ.","Công việc",5],
-["与其反复抱怨，不如主动寻找解决办法。","Yǔqí fǎnfù bàoyuàn, bùrú zhǔdòng xúnzhǎo jiějué bànfǎ.","Thay vì phàn nàn, chi bằng chủ động tìm cách giải quyết.","Ý kiến",5],
-["这次调整的具体效果，还需要通过实际数据来验证。","Zhè cì tiáozhěng de jùtǐ xiàoguǒ, hái xūyào tōngguò shíjì shùjù lái yànzhèng.","Hiệu quả điều chỉnh cần được xác minh bằng dữ liệu thực tế.","Công việc",6],
-["只有把各个环节协调好，整个流程才能顺利进行。","Zhǐyǒu bǎ gège huánjié xiétiáo hǎo, zhěnggè liúchéng cái néng shùnlì jìnxíng.","Chỉ khi phối hợp tốt từng khâu, toàn bộ quy trình mới thuận lợi.","Công việc",6],
-["感谢你的耐心解释，现在我终于明白了。","Gǎnxiè nǐ de nàixīn jiěshì, xiànzài wǒ zhōngyú míngbai le.","Cảm ơn bạn đã kiên nhẫn giải thích, bây giờ tôi đã hiểu.","Giao tiếp",3]
-];
-const DIALOGS=[
-["你叫什么名字？","Giới thiệu tên của bạn.","我叫明。",["我叫","名字","叫"]],
-["你是哪国人？","Nói quốc tịch của bạn.","我是越南人。",["越南","我是"]],
-["你为什么学习中文？","Nói lý do học tiếng Trung.","因为我想和中国人交流。",["因为","中文","交流","工作","喜欢"]],
-["你今天忙吗？","Trả lời hôm nay bạn có bận không.","今天不太忙。",["忙","不忙","有点儿"]],
-["你平时几点起床？","Nói giờ bạn thường thức dậy.","我平时六点起床。",["点","起床","六","七","八"]],
-["你想吃什么？","Gọi món bạn muốn ăn.","我想吃米饭和鸡肉。",["想吃","米饭","面","饺子","鸡肉"]],
-["你周末有什么打算？","Nói kế hoạch cuối tuần.","我打算在家休息。",["打算","周末","休息","去","朋友"]],
-["你在哪里工作？","Nói nơi làm việc.","我在工厂工作。",["工作","工厂","公司","在"]],
-["如果机器坏了，你会怎么办？","Nói cách xử lý khi máy hỏng.","我会先停机，然后通知维修人员。",["停机","通知","维修","检查","机器"]],
-["你觉得质量和效率哪个更重要？","Nêu ý kiến về chất lượng và hiệu suất.","我觉得质量更重要，因为质量关系到客户。",["觉得","质量","效率","重要","因为"]],
-["遇到工作上的问题，你通常怎么解决？","Mô tả cách giải quyết vấn đề.","我先分析原因，再和同事讨论解决办法。",["问题","解决","原因","分析","讨论"]],
-["请介绍一下你的工作经验。","Giới thiệu kinh nghiệm làm việc.","我有三年的工作经验。",["工作经验","负责","工作","经验"]],
-["你认为团队合作为什么重要？","Trình bày quan điểm về làm việc nhóm.","团队合作可以提高效率。",["团队","合作","效率","因为"]],
-["如果客户对产品不满意，你会怎么处理？","Nêu cách xử lý khiếu nại.","我会先了解情况，再提出解决方案。",["客户","产品","情况","解决","方案"]],
-["你对未来有什么计划？","Nói dự định tương lai.","我希望提高中文水平。",["未来","计划","希望","提高","中文"]]
-];
+const PHRASES=[["我今天去学校。","Wǒ jīntiān qù xuéxiào.","Hôm nay tôi đi đến trường.","Cuộc sống",1],["爸爸在家喝茶。","Bàba zài jiā hē chá.","Bố ở nhà uống trà.","Gia đình",1],["你喜欢吃米饭吗？","Nǐ xǐhuan chī mǐfàn ma?","Bạn có thích ăn cơm không?","Ăn uống",1],["今天星期几？","Jīntiān xīngqī jǐ?","Hôm nay là thứ mấy?","Thời gian",1],["我有一个哥哥和一个弟弟。","Wǒ yǒu yí ge gēge hé yí ge dìdi.","Tôi có một anh trai và một em trai.","Gia đình",1],["我想买一件白色的衣服。","Wǒ xiǎng mǎi yí jiàn báisè de yīfu.","Tôi muốn mua một chiếc áo màu trắng.","Mua sắm",2],["他坐地铁去医院看病。","Tā zuò dìtiě qù yīyuàn kànbìng.","Anh ấy đi tàu điện ngầm đến bệnh viện khám bệnh.","Di chuyển",2],["我坐地铁去公司。","Wǒ zuò dìtiě qù gōngsī.","Tôi đi tàu điện ngầm đến công ty.","Công việc",2],["我想喝咖啡。","Wǒ xiǎng hē kāfēi.","Tôi muốn uống cà phê.","Ăn uống",2],["我和朋友去商店。","Wǒ hé péngyou qù shāngdiàn.","Tôi đi cửa hàng cùng bạn.","Mua sắm",2],["因为今天下雨，所以我们没有出去。","Yīnwèi jīntiān xiàyǔ, suǒyǐ wǒmen méiyǒu chūqù.","Vì hôm nay trời mưa nên chúng tôi không ra ngoài.","Thời tiết",3],["我已经看完这本书了。","Wǒ yǐjīng kàn wán zhè běn shū le.","Tôi đã đọc xong quyển sách này rồi.","Học tập",3],["老师让我们用汉语介绍自己的家人。","Lǎoshī ràng wǒmen yòng Hànyǔ jièshào zìjǐ de jiārén.","Thầy/cô yêu cầu chúng tôi dùng tiếng Trung giới thiệu gia đình mình.","Học tập",3],["他每天跑步半个小时，身体很好。","Tā měitiān pǎobù bàn ge xiǎoshí, shēntǐ hěn hǎo.","Mỗi ngày anh ấy chạy bộ nửa tiếng, sức khỏe rất tốt.","Sức khỏe",3],["经理今天安排工作。","Jīnglǐ jīntiān ānpái gōngzuò.","Hôm nay quản lý sắp xếp công việc.","Công việc",4],["我们按照计划完成工作。","Wǒmen ànzhào jìhuà wánchéng gōngzuò.","Chúng tôi hoàn thành công việc theo kế hoạch.","Công việc",4],["请你帮助我。","Qǐng nǐ bāngzhù wǒ.","Xin bạn giúp tôi.","Giao tiếp",4],["我有一个问题。","Wǒ yǒu yí ge wèntí.","Tôi có một vấn đề.","Giao tiếp",4],["通过分析实际数据，我们发现生产效率有所提高。","Tōngguò fēnxī shíjì shùjù, wǒmen fāxiàn shēngchǎn xiàolǜ yǒusuǒ tígāo.","Thông qua phân tích dữ liệu thực tế, chúng tôi phát hiện hiệu suất sản xuất đã được cải thiện.","Nhà máy",5],["即使遇到困难，团队也会尽力完成任务。","Jíshǐ yùdào kùnnan, tuánduì yě huì jìnlì wánchéng rènwu.","Dù gặp khó khăn, nhóm vẫn sẽ cố gắng hoàn thành nhiệm vụ.","Công việc",5],["客户的意见帮助我们改进产品。","Kèhù de yìjiàn bāngzhù wǒmen gǎijìn chǎnpǐn.","Ý kiến của khách hàng giúp chúng tôi cải tiến sản phẩm.","Nhà máy",5],["我认为应该改进工作方法。","Wǒ rènwéi yīnggāi gǎijìn gōngzuò fāngfǎ.","Tôi cho rằng nên cải tiến phương pháp làm việc.","Công việc",5],["管理者应当结合长期目标与实际情况制定合理的方案。","Guǎnlǐzhě yīngdāng jiéhé chángqī mùbiāo yǔ shíjì qíngkuàng zhìdìng hélǐ de fāng'àn.","Nhà quản lý nên kết hợp mục tiêu dài hạn và tình hình thực tế để xây dựng phương án hợp lý.","Quản lý",6],["这项措施不仅降低了成本，还提高了整体效率。","Zhè xiàng cuòshī bùjǐn jiàngdī le chéngběn, hái tígāo le zhěngtǐ xiàolǜ.","Biện pháp này không chỉ giảm chi phí mà còn nâng cao hiệu suất tổng thể.","Quản lý",6],["面对复杂问题，我们需要结合数据认真分析。","Miànduì fùzá wèntí, wǒmen xūyào jiéhé shùjù rènzhēn fēnxī.","Đối mặt với vấn đề phức tạp, chúng ta cần kết hợp dữ liệu để phân tích cẩn thận.","Phân tích",6],["只有认真分析实际情况，才能作出合理的决定。","Zhǐyǒu rènzhēn fēnxī shíjì qíngkuàng, cái néng zuòchū hélǐ de juédìng.","Chỉ khi phân tích tình hình thực tế cẩn thận mới có thể đưa ra quyết định hợp lý.","Phân tích",6]];
+const DIALOGS=[[1,"你是学生吗？","Trả lời câu hỏi về thân phận của bạn。","我是学生。",["我是","学生"]],[1,"你是哪国人？","Nói bạn là người nước nào。","我是中国人。",["我是","中国人"]],[1,"你喜欢喝什么？","Nói đồ uống bạn thích。","我喜欢喝茶。",["喜欢","喝茶","茶"]],[1,"你家有几口人？","Nói số người trong gia đình。","我家有三口人。",["我家","三口人","家"]],[2,"你怎么去公司？","Nói phương tiện đi làm。","我坐地铁去公司。",["坐地铁","公司","去"]],[2,"你想买什么？","Kể món đồ bạn muốn mua。","我想买一件白色的衣服。",["想买","衣服","白色"]],[2,"你想喝什么？","Nói đồ uống bạn muốn。","我想喝咖啡。",["想喝","咖啡"]],[2,"你和谁去商店？","Nói người đi cùng bạn。","我和朋友去商店。",["朋友","商店","和"]],[3,"你为什么学习汉语？","Nói lý do học tiếng Trung。","因为我喜欢汉语。",["因为","喜欢","汉语"]],[3,"你每天怎么锻炼身体？","Nói cách bạn rèn luyện sức khỏe。","我每天跑步半个小时。",["每天","跑步","半个小时"]],[3,"你觉得这本书怎么样？","Nêu cảm nhận về quyển sách。","我觉得这本书很好看。",["觉得","书","好看"]],[3,"你周末常常做什么？","Kể hoạt động cuối tuần。","我常常和朋友去公园。",["常常","朋友","公园"]],[4,"你对工作有什么计划？","Nói kế hoạch công việc。","我想按照计划完成工作。",["按照","计划","完成","工作"]],[4,"遇到问题，你怎么办？","Nói cách xử lý khi gặp vấn đề。","我先检查问题，再告诉经理。",["检查","问题","告诉","经理"]],[4,"你觉得这个办法怎么样？","Đưa ra nhận xét về phương án。","我觉得这个办法不错。",["觉得","办法","不错"]],[4,"你们什么时候开会？","Nói thời gian họp。","我们明天下午开会。",["明天","下午","开会"]],[5,"你认为怎样提高效率？","Nêu cách nâng cao hiệu suất。","我认为应该改进工作方法。",["认为","提高","效率","改进"]],[5,"遇到困难时，你们怎么做？","Mô tả cách nhóm xử lý khó khăn。","我们会分析原因，再寻找办法。",["困难","分析","原因","办法"]],[5,"公司为什么重视客户意见？","Giải thích tầm quan trọng của ý kiến khách hàng。","客户的意见帮助我们改进产品。",["客户","意见","帮助","产品"]],[5,"你如何安排工作？","Nói cách sắp xếp công việc。","我会按照计划完成任务。",["按照","计划","完成","任务"]],[6,"面对复杂问题，你怎样作出决定？","Nêu cách đưa ra quyết định。","我会结合实际情况认真分析。",["复杂","结合","实际情况","分析"]],[6,"你认为长期学习有什么意义？","Nêu ý nghĩa của việc học lâu dài。","长期学习能够提高我们的能力。",["长期","提高","能力"]],[6,"怎样减少成本并提高效率？","Nêu cách giảm chi phí và tăng hiệu suất。","我们需要改进方法，合理安排资源。",["减少","成本","提高","效率"]],[6,"你如何看待团队合作？","Nêu quan điểm về hợp tác nhóm。","团队合作可以解决很多问题。",["团队","合作","解决","问题"]]];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>String(s||"").replace(/[，。！？、,.!?\s"'“”‘’]/g,"").toLowerCase();
 function save(){localStorage.setItem(KEY,JSON.stringify(db))}
@@ -66,12 +20,31 @@ function moveWord(d){if(!filtered.length)return;wi=(wi+d+filtered.length)%filter
 function rateWord(known){if(!current)return;let key=current[0],old=db.words[key]||{},n=(old.reviews||0)+1;db.words[key]={...old,status:known?"known":"again",reviews:n,due:Date.now()+(known?[1,3,7,14,30][Math.min(n-1,4)]:0)*86400000};db.xp+=known?5:1;save();renderHome();toast(known?"Tốt! +5 XP":"Đã thêm vào danh sách ôn");renderWords(key);if(filtered[wi]?.[0]===key)moveWord(1)}
 function renderGrammar(){let q=norm($("grammarSearch").value),a=GRAMMAR.filter(g=>g[0]<=level&&(!q||norm(g.slice(1).join(" ")).includes(q)));$("grammarCount").textContent=a.length+" điểm ngữ pháp";$("grammarList").innerHTML=a.map(g=>'<article class="grammar-item"><div class="meta">'+(g[0]>=7?"HSK 7–9":"HSK "+g[0])+' · '+esc(g[2])+' · '+esc(g[3])+'</div><h3>'+esc(g[1])+'</h3>'+(g[4]?'<p class="muted">'+esc(g[4])+'</p>':"")+'<div class="examples">'+String(g[5]||"").split(/\r?\n/).filter(Boolean).slice(0,5).map(x=>'<p>'+esc(x)+'</p>').join("")+'</div></article>').join("")||'<div class="empty">Không tìm thấy ngữ pháp.</div>'}
 function renderPhrases(){let q=norm($("phraseSearch").value),topic=$("phraseTopic").value;let a=PHRASES.filter(p=>(!q||norm(p.join(" ")).includes(q))&&(topic==="all"||p[3]===topic));$("phraseList").innerHTML=a.map(p=>'<article class="phrase"><div class="meta">HSK '+p[4]+' · '+esc(p[3])+'</div><h3>'+esc(p[0])+'</h3><p class="pinyin">'+esc(p[1])+'</p><p>'+esc(p[2])+'</p><button class="btn light" data-say="'+esc(p[0])+'">🔊 Nghe câu</button></article>').join("");$("phraseList").querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>speak(b.dataset.say))}
-function nextListening(){phrase=PHRASES[Math.floor(Math.random()*PHRASES.length)];answered=false;$("listenHanzi").textContent=$("blindMode").checked?"••••••••":phrase[0];$("listenPinyin").textContent="";$("listenMeaning").textContent="";$("listenFeedback").textContent="";let opts=[phrase[2]];while(opts.length<4){let x=PHRASES[Math.floor(Math.random()*PHRASES.length)][2];if(!opts.includes(x))opts.push(x)}opts.sort(()=>Math.random()-.5);$("listenChoices").innerHTML=opts.map(x=>'<button class="answer-option">'+esc(x)+'</button>').join("");$("listenChoices").querySelectorAll("button").forEach(b=>b.onclick=()=>answerListening(b))}
+function nextListening(){
+ const pool=PHRASES.filter(p=>p[4]<=level);
+ if(!pool.length){$("listenHanzi").textContent="Chưa có bài nghe cho HSK "+level;$("listenChoices").innerHTML="";return}
+ phrase=pool[Math.floor(Math.random()*pool.length)];answered=false;
+ $("listenHanzi").textContent=$("blindMode").checked?"••••••••":phrase[0];
+ $("listenPinyin").textContent="";$("listenMeaning").textContent="";
+ $("listenFeedback").textContent="HSK "+phrase[4]+" · "+phrase[3];
+ let opts=[phrase[2]],attempts=0;
+ while(opts.length<Math.min(4,pool.length)&&attempts++<100){let x=pool[Math.floor(Math.random()*pool.length)][2];if(!opts.includes(x))opts.push(x)}
+ opts.sort(()=>Math.random()-.5);
+ $("listenChoices").innerHTML=opts.map(x=>'<button class="answer-option">'+esc(x)+'</button>').join("");
+ $("listenChoices").querySelectorAll("button").forEach(b=>b.onclick=()=>answerListening(b));
+}
 function playListening(r=1){if(phrase)speak(phrase[0],r)}
 function answerListening(btn){if(answered)return;answered=true;let ok=btn.textContent===phrase[2];$("listenChoices").querySelectorAll("button").forEach(b=>{b.disabled=true;if(b.textContent===phrase[2])b.classList.add("correct")});if(!ok)btn.classList.add("wrong");$("listenHanzi").textContent=phrase[0];$("listenPinyin").textContent=phrase[1];$("listenMeaning").textContent=phrase[2];$("listenFeedback").textContent=ok?"Chính xác! +5 XP":"Chưa đúng. Nghe lại và thử câu tiếp theo.";if(ok){db.xp+=5;activity("listen");save();renderHome()}}
-function nextDialog(){dialog=DIALOGS[Math.floor(Math.random()*DIALOGS.length)];$("dialogQuestion").textContent=dialog[0];$("dialogHint").textContent=dialog[1];$("answerInput").value="";$("dialogResult").textContent="";$("speechStatus").textContent="Nghe câu hỏi rồi trả lời bằng tiếng Trung."}
+function nextDialog(){
+ const pool=DIALOGS.filter(d=>d[0]<=level);
+ if(!pool.length){$("dialogQuestion").textContent="Chưa có bài luyện nói cho HSK "+level;return}
+ dialog=pool[Math.floor(Math.random()*pool.length)];
+ $("dialogQuestion").textContent=dialog[1];$("dialogHint").textContent="HSK "+dialog[0]+" · "+dialog[2];
+ $("answerInput").value="";$("dialogResult").textContent="";
+ $("speechStatus").textContent="Nghe câu hỏi rồi trả lời bằng tiếng Trung.";
+}
 function playDialog(){if(dialog)speak(dialog[0])}
-function evaluateAnswer(t){if(!dialog||!t.trim())return;let hit=dialog[3].filter(k=>norm(t).includes(norm(k))).length,ok=hit>0;$("dialogResult").innerHTML='<p>Bạn nói: <b>'+esc(t)+'</b></p><div class="evaluation '+(ok?"ok":"try")+'">'+(ok?"Đã nhận diện được từ khóa phù hợp. Tốt!":"Chưa nhận ra từ khóa phù hợp, hãy thử câu ngắn hơn.")+'</div><p class="muted">Câu trả lời tham khảo: '+esc(dialog[2])+'</p>';if(ok){db.xp+=8;activity("speak");save();renderHome()}}
+function evaluateAnswer(t){if(!dialog||!t.trim())return;let hit=dialog[4].filter(k=>norm(t).includes(norm(k))).length,ok=hit>0;$("dialogResult").innerHTML='<p>Bạn nói: <b>'+esc(t)+'</b></p><div class="evaluation '+(ok?"ok":"try")+'">'+(ok?"Đã nhận diện được từ khóa phù hợp. Tốt!":"Chưa nhận ra từ khóa phù hợp, hãy thử câu ngắn hơn.")+'</div><p class="muted">Câu trả lời tham khảo: '+esc(dialog[2])+'</p>';if(ok){db.xp+=8;activity("speak");save();renderHome()}}
 function recordAnswer(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$("speechStatus").textContent="Trình duyệt chưa hỗ trợ nhận diện giọng nói. Nhập câu trả lời bên dưới.";return}try{let r=new SR();r.lang="zh-CN";r.interimResults=false;$("micButton").classList.add("recording");$("speechStatus").textContent="Đang nghe… hãy nói tiếng Trung.";r.onresult=e=>{$("answerInput").value=e.results[0][0].transcript;evaluateAnswer($("answerInput").value)};r.onerror=e=>$("speechStatus").textContent="Lỗi micro: "+e.error;r.onend=()=>$("micButton").classList.remove("recording");r.start()}catch{$("speechStatus").textContent="Không thể mở micro. Kiểm tra quyền truy cập."}}
 function activity(k){let d=new Date().toISOString().slice(0,10);db.activities=db.activities||{};db.activities[d]=db.activities[d]||{};db.activities[d][k]=true}
 function due(){return Object.entries(db.words).filter(([w,v])=>v.status==="again"||(v.status==="known"&&v.due&&v.due<=Date.now()))}
