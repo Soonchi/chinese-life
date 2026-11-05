@@ -28,3 +28,16 @@ Lưu ý: GitHub Pages là website công khai. Không đưa dữ liệu riêng t�
 - Nhận diện giọng nói tùy trình duyệt/thiết bị; cần HTTPS, quyền microphone và thường cần kết nối mạng. iOS Safari có thể không hỗ trợ Web Speech Recognition ổn định.
 - Đây là kiểm tra transcript (nội dung câu nói), chưa phải chấm chất lượng phát âm/4 thanh điệu. Chấm thanh điệu cần dịch vụ phoneme/prosody chuyên dụng.
 - Câu hỏi và đáp án hiện là bộ nội dung khởi đầu cho chiến dịch; chưa phải ngân hàng đề HSK đầy đủ hoặc AI NPC hội thoại tự do.
+
+
+## Chinese Life 3.2 — Thế giới pixel Vân Hải
+- Thay khu vực cảnh cũ bằng bản đồ pixel-art vẽ bằng Canvas, có 7 khu vực: khu phố, phố thương mại, ngõ ẩm thực, nhà, công viên, học viện và trung tâm thương mại.
+- Di chuyển tự do bằng joystick analog, WASD/phím mũi tên hoặc D-pad; có giới hạn bản đồ và va chạm với công trình/vật thể lớn.
+- NPC xuất hiện theo từng khu vực, có chuyển động nhàn rỗi/tuần tra nhẹ; chạm NPC hoặc đến gần rồi bấm tương tác để mở hội thoại hiện có.
+- Thêm mức độ thân thiết, điểm quan hệ và quà tặng (trà/sách) sử dụng tiền trong game.
+- Bản đồ thành phố cho phép chuyển nhanh giữa 7 khu vực.
+- Giữ nguyên save game, chiến dịch HSK 1–6 và dữ liệu cũ; quan hệ NPC lưu riêng trong localStorage.
+
+### Lưu ý 3.2
+- Đồ họa pixel hiện được vẽ bằng Canvas và các hình khối pixel, chưa phải bộ sprite-sheet/animation vẽ tay chuyên nghiệp.
+- NPC hiện có chuyển động tuần tra nhẹ và nhãn thời gian trong ngày; chưa có lịch AI phức tạp, hội thoại tự do hay đường đi tìm đường (pathfinding).
