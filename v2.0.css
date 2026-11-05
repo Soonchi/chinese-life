@@ -25,3 +25,5 @@
 .exam-jump button.current{border:2px solid var(--blue);color:var(--blue);font-weight:800}
 .exam-jump button.answered{background:#e8f7f0;border-color:#a9dbc8;color:#167956}
 @media(max-width:520px){.exam-footer{justify-content:space-between}.exam-footer .muted{display:none}.exam-jump button{width:28px;height:28px}}
+
+#wordProgress{flex-basis:100%;font-weight:650;color:#53627a}#resumeWord{white-space:nowrap}@media(max-width:520px){#resumeWord{flex:1}}
