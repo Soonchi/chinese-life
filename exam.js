@@ -178,7 +178,7 @@ function renderExamQuestion(){
   let choice=q.options[+b.dataset.choice];examAnswers[examIndex]={chosen:choice,ok:choice===q.answer,manual:false};renderExamQuestion();
  });
  if(q.type==="self"){
-  $("examSelfPass").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}examAnswers[examIndex]={chosen:value,ok:true,manual:true,assessed:true};renderExamQuestion()};
+  $("examSelfPass").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}let chars=Array.from(value.replace(/\s/g,"")).length;if(q.minChars&&chars<q.minChars){toast("Bài viết cần ít nhất "+q.minChars+" chữ Hán/ký tự.");return}examAnswers[examIndex]={chosen:value,ok:true,manual:true,assessed:true};renderExamQuestion()};
   $("examSelfFail").onclick=()=>{let value=$("examWrittenAnswer").value.trim();if(!value){toast("Hãy viết câu trả lời trước.");return}examAnswers[examIndex]={chosen:value,ok:false,manual:true,assessed:true};renderExamQuestion()};
  }
  $("examPrev").onclick=()=>{examSaveCurrent();if(examIndex>0){examIndex--;renderExamQuestion()}};
