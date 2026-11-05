@@ -26,3 +26,12 @@
 
 ## Ghi chú
 Đề cương chính thức gộp từ vựng và ngữ pháp cấp 7–9 thành band chung. Vì vậy app cho chọn HSK 7/8/9 để học theo lộ trình, nhưng không gán bừa 5.600 mục từ thành ba danh sách độc lập.
+
+
+## Lộ trình học tuần tự HSK 1–6
+- Ban đầu chỉ mở HSK 1. HSK 2–6 bị khóa cho tới khi vượt bài thi cấp trước.
+- Điều kiện mở bài thi: đánh dấu đã nhớ toàn bộ từ vựng cấp hiện tại, đã học toàn bộ điểm ngữ pháp và mẫu câu của cấp.
+- Bài thi tổng kết có 25 câu, chia đều 5 phần: từ vựng, ngữ pháp, nghe hiểu, đọc hiểu, hiểu & vận dụng.
+- Điều kiện đạt: từ 80% tổng điểm và tối thiểu 60% ở từng phần.
+- Tiến độ học và kết quả thi được lưu trên thiết bị bằng localStorage.
+- HSK 7–9 tạm ẩn khỏi lộ trình học, dữ liệu vẫn được giữ để phát triển sau.
