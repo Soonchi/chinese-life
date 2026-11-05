@@ -44,5 +44,6 @@ const READING_BANK={
 };
 function openTab(id){
  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
- $("pageTitle").textContent=({home:"Tổng quan",vocab:"Từ vựng HSK "+level,grammar:"Ngữ pháp HSK "+level,phrases:"Mẫu câu giao tiếp",listening:"Luyện nghe hiểu",speaking:"Luyện nói & phản xạ",review:"Ôn tập thông minh",exam:"Thi tổng kết HSK "+level})[id]||"Chinese Daily";if(id==="review")renderReview();window.scrollTo({top:0,behavior:"smooth"});
+ $("pageTitle").textContent=({home:"Tổng quan",vocab:"Từ vựng HSK "+level,grammar:"Ngữ pháp HSK "+level,phrases:"Mẫu câu giao tiếp",listening:"Luyện nghe hiểu",speaking:"Luyện nói & phản xạ",review:"Ôn tập thông minh",exam:"Thi tổng kết HSK "+level})[id]||"Chinese Daily";if(id==="review")renderReview();
+ const target=document.getElementById(id);if(target){requestAnimationFrame(()=>{const scroller=document.scrollingElement||document.documentElement;const y=target.getBoundingClientRect().top+scroller.scrollTop-12;scroller.scrollTo({top:Math.max(0,y),behavior:"smooth"})})}
 }
