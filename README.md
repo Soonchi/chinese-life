@@ -41,3 +41,11 @@ Lưu ý: GitHub Pages là website công khai. Không đưa dữ liệu riêng t�
 ### Lưu ý 3.2
 - Đồ họa pixel hiện được vẽ bằng Canvas và các hình khối pixel, chưa phải bộ sprite-sheet/animation vẽ tay chuyên nghiệp.
 - NPC hiện có chuyển động tuần tra nhẹ và nhãn thời gian trong ngày; chưa có lịch AI phức tạp, hội thoại tự do hay đường đi tìm đường (pathfinding).
+
+
+## Chinese Life 3.3 — Controller HUD
+- Thay giao diện nhiều bảng/nút hiển thị sẵn bằng màn hình game tập trung vào thế giới pixel.
+- Ẩn header, quest card, navigation và các bảng cũ khỏi giao diện chính nhưng giữ nguyên DOM và logic để không mất chức năng/dữ liệu.
+- Thêm HUD nhỏ hiển thị cấp độ, EXP, tiền và khu vực hiện tại.
+- Thêm dock điều khiển; click MENU, NHIỆM VỤ, BẢN ĐỒ, TÚI ĐỒ, HỌC TẬP hoặc ĐỜI SỐNG để mở bảng chức năng, click lại hoặc nhấn X để thu gọn.
+- Giữ joystick, nút tương tác NPC, quan hệ NPC, chiến dịch HSK và các chức năng cũ; tối ưu bố cục cho màn hình cảm ứng.
