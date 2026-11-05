@@ -1,0 +1,22 @@
+
+/* Chinese Life 3.2 pixel world */
+#scene{background:#8ebd9b!important;image-rendering:pixelated;touch-action:none}
+#cl32World{position:absolute;inset:0;width:100%;height:100%;z-index:2;image-rendering:pixelated}
+.cl32-joy{position:absolute;z-index:15;left:12px;bottom:12px;width:104px;height:104px;border-radius:50%;background:#1533439c;border:2px solid #ffffff9c;display:grid;place-items:center;touch-action:none;box-shadow:0 3px 12px #0005}
+.cl32-joy-ring{position:absolute;inset:10px;border:1px dashed #ffffff70;border-radius:50%}
+.cl32-joy-knob{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,#ffe4a0,#c99545);border:3px solid #fff;box-shadow:0 3px 8px #0008;pointer-events:none}
+.cl32-actions{position:absolute;z-index:16;right:12px;bottom:18px;display:flex;gap:8px}
+.cl32-action{width:48px;height:48px;border-radius:50%;border:2px solid #fff;background:#3c886b;color:#fff;font-size:20px;font-weight:900;box-shadow:0 3px 0 #22533f}
+.cl32-action.secondary{background:#a94f5d;box-shadow:0 3px 0 #6e3540}
+.cl32-hint{position:absolute;z-index:14;left:50%;bottom:7px;transform:translateX(-50%);background:#183342dd;color:#fff;border:1px solid #ffffff50;border-radius:14px;padding:5px 10px;font-size:10px;white-space:nowrap;pointer-events:none;max-width:55%;overflow:hidden;text-overflow:ellipsis}
+.cl32-city-head{background:#203f4c;color:#fff;border-radius:10px;padding:12px;margin-bottom:10px}
+.cl32-city-head small{display:block;color:#d7e5dd;margin-top:4px}
+.cl32-city-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.cl32-district{border:1px solid #d5ddce;border-radius:9px;background:#f5f5e9;padding:11px;text-align:left;color:#29434a}
+.cl32-district b{display:block;font-size:12px}
+.cl32-district small{display:block;font-size:10px;color:#7a887e;margin-top:4px}
+.cl32-bondbar{height:10px;background:#dce5d8;border-radius:10px;overflow:hidden}
+.cl32-bondbar span{display:block;height:100%;background:linear-gradient(90deg,#e8bf67,#55a17c)}
+.cl32-gifts{display:flex;gap:7px;flex-wrap:wrap}
+.cl32-gifts .btn{flex:1;font-size:11px}
+@media(max-width:430px){.cl32-joy{width:92px;height:92px;left:8px;bottom:8px}.cl32-joy-knob{width:38px;height:38px}.cl32-actions{right:8px;bottom:13px}.cl32-action{width:43px;height:43px}.cl32-hint{max-width:48%;font-size:9px}}
