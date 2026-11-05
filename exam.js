@@ -1,7 +1,7 @@
 /* HSK 3.0 full-length mock exams. Original practice items; not copied from CTI papers. */
 const HSK_EXAM_CONFIG={
  1:{listening:20,reading:20,writing:0,minutes:35,total:40,pass:60},
- 2:{listening:35,reading:25,writing:0,minutes:55,total:60,pass:60},
+ 2:{listening:35,reading:25,writing:0,minutes:50,total:60,pass:60},
  3:{listening:40,reading:30,writing:10,minutes:85,total:80,pass:60},
  4:{listening:45,reading:40,writing:15,minutes:100,total:100,pass:60},
  5:{listening:45,reading:45,writing:10,minutes:120,total:100,pass:60},
