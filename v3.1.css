@@ -1,0 +1,42 @@
+
+/* Chinese Life 3.1 campaign layer */
+.cl31-launch{width:100%;margin:0 0 2px;background:linear-gradient(110deg,#244f61,#397f70);color:#fff;border:2px solid #e8c879;border-radius:12px;padding:11px 13px;font-weight:950;text-align:left;box-shadow:0 4px 0 #183b47;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cl31-launch small{display:block;font-size:10px;font-weight:600;opacity:.85;margin-top:3px}
+.cl31-badge{background:#f3d48a;color:#3c3423;border-radius:20px;padding:5px 9px;font-size:10px;white-space:nowrap}
+.cl31-joystick{position:absolute;z-index:12;left:12px;bottom:12px;width:112px;height:112px;border-radius:50%;background:#1734448c;border:2px solid #fff9;touch-action:none;display:grid;place-items:center;box-shadow:0 4px 14px #0003}
+.cl31-stick{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#f6d78d,#d9a84f);border:3px solid #fff9;box-shadow:0 3px 8px #0005;pointer-events:none;transform:translate(0,0)}
+.cl31-joystick:after{content:"";position:absolute;inset:8px;border:1px dashed #ffffff55;border-radius:50%;pointer-events:none}
+.cl31-hud{position:absolute;z-index:11;right:10px;bottom:12px;background:#142c3bdc;color:white;border:1px solid #fff6;border-radius:10px;padding:8px 10px;font-size:10px;max-width:150px;pointer-events:none}
+.cl31-overlay{position:fixed;inset:0;background:#071923d9;z-index:1000;display:none;align-items:center;justify-content:center;padding:14px}
+.cl31-overlay.open{display:flex}
+.cl31-window{width:min(100%,560px);max-height:90dvh;overflow:auto;background:#f5f0df;color:#263c43;border:3px solid #d9b969;border-radius:17px;box-shadow:0 22px 70px #0009;padding:15px}
+.cl31-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;border-bottom:1px solid #d8ddcf;padding-bottom:10px;margin-bottom:12px}
+.cl31-kicker{font-size:10px;font-weight:950;letter-spacing:1px;color:#9a7435}
+.cl31-title{font-size:20px;font-weight:950;margin:3px 0}
+.cl31-close{border:0;border-radius:9px;background:#dfe6d9;color:#284451;padding:8px 11px;font-weight:900}
+.cl31-chapters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.cl31-chapter{border:2px solid #d6ddce;background:#fffdf4;border-radius:12px;padding:11px;text-align:left;color:#29434a;min-height:100px}
+.cl31-chapter strong{display:block;font-size:13px;margin:5px 0}
+.cl31-chapter small{font-size:10px;color:#718078;line-height:1.4;display:block}
+.cl31-chapter.active{border-color:#d3a64f;background:#fff4d7}
+.cl31-chapter.locked{opacity:.48;filter:grayscale(.8)}
+.cl31-chapter.done{border-color:#62a17c;background:#e8f4e8}
+.cl31-progress{height:7px;background:#dfe5d8;border-radius:10px;overflow:hidden;margin-top:8px}
+.cl31-progress span{display:block;height:100%;background:linear-gradient(90deg,#e4b957,#4e9b78)}
+.cl31-story{background:linear-gradient(120deg,#203f4c,#315e5b);color:#fff;border-radius:12px;padding:13px;margin-bottom:12px}
+.cl31-story p{font-size:12px;line-height:1.6;color:#e3eee5;margin:6px 0 0}
+.cl31-question{font-size:25px;font-weight:950;line-height:1.4;color:#214f61;margin:14px 0 4px}
+.cl31-pinyin{color:#a27c3a;font-size:13px}
+.cl31-translation{font-size:12px;color:#6c7971;margin:5px 0 12px}
+.cl31-saybox{background:#eaf0e5;border:1px solid #d3ddce;border-radius:12px;padding:12px;margin:10px 0}
+.cl31-saybox label{font-size:10px;font-weight:900;letter-spacing:.5px}
+.cl31-transcript{font-size:14px;font-weight:800;min-height:22px;margin-top:7px;color:#254b58;overflow-wrap:anywhere}
+.cl31-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.cl31-btn{border:0;border-radius:10px;padding:11px 13px;font-weight:900;background:#397e68;color:white;flex:1;min-width:115px}
+.cl31-btn.gold{background:#e6bd65;color:#3e321e}
+.cl31-btn.soft{background:#dce7dc;color:#28434a}
+.cl31-result{padding:10px;border-radius:9px;font-size:12px;line-height:1.5;margin-top:10px;background:#e6eee4;color:#405d4b}
+.cl31-result.bad{background:#fae8df;color:#984d3d}
+.cl31-result.good{background:#e2f2e4;color:#2d7951}
+.cl31-note{font-size:10px;color:#7a867d;line-height:1.5;margin-top:9px}
+@media(max-width:430px){.cl31-joystick{width:96px;height:96px;left:8px;bottom:8px}.cl31-stick{width:40px;height:40px}.cl31-hud{right:7px;bottom:8px;max-width:128px;font-size:9px}.cl31-window{padding:12px}.cl31-chapter{padding:9px;min-height:95px}.cl31-question{font-size:22px}}
