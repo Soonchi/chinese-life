@@ -43,32 +43,6 @@ const READING_BANK={
 5:{text:"随着市场竞争不断加剧，企业必须持续优化管理流程。一方面要提高生产效率，另一方面也要重视产品质量。只有建立有效的质量管理体系，才能减少浪费并增强客户信任。",qs:[["企业为什么要优化管理流程？",["市场竞争加剧","员工人数增加","天气变冷","厂房搬迁"],"市场竞争加剧"],["企业需要同时重视什么？",["速度和价格","效率和质量","销售和广告","规模和地点"],"效率和质量"],["建立质量管理体系有什么作用？",["增加浪费","减少浪费","延长交货","减少沟通"],"减少浪费"],["有效的质量管理有助于增强谁的信任？",["员工","供应商","客户","竞争对手"],"客户"],["文章主要讨论什么？",["企业流程和质量管理","员工旅游","市场广告","设备购买"],"企业流程和质量管理"]]},
 6:{text:"在全球产业链持续调整的背景下，企业面临的不仅是成本压力，还有技术升级与人才培养等多重挑战。管理者需要结合长期战略与实际数据，评估改革措施的可行性，并通过跨部门协作及时发现执行过程中的问题。",qs:[["企业目前面临哪些挑战？",["只有成本压力","技术升级和人才培养等多重挑战","只需扩大厂房","员工休假安排"],"技术升级和人才培养等多重挑战"],["管理者评估改革措施时应结合什么？",["个人感觉","长期战略与实际数据","竞争对手的广告","短期情绪"],"长期战略与实际数据"],["改革措施需要评估什么？",["可行性","颜色","员工年龄","办公地点"],"可行性"],["跨部门协作有什么作用？",["增加流程","及时发现执行问题","减少信息","推迟改革"],"及时发现执行问题"],["文章强调企业应如何应对挑战？",["依靠单一部门","结合战略、数据和协作","停止技术升级","只关注成本"],"结合战略、数据和协作"]]}
 };
-let examQuestions=[],examIndex=0,examAnswers=[];
-function mix(a){return [...a].sort(()=>Math.random()-.5)}
-function choose(a,n){let s=mix(a);return Array.from({length:n},(_,i)=>s[i%s.length])}
-function answerOptions(correct,others){return mix([correct,...mix([...new Set(others.filter(x=>x!==correct))]).slice(0,3)])}
-function buildExam(){
- let n=level,w=VOCAB.filter(x=>x[3]===n),g=GRAMMAR.filter(x=>x[0]===n),p=PHRASES.filter(x=>x[4]===n),out=[];
- choose(w,5).forEach(x=>out.push({part:"Từ vựng",prompt:"Chọn pinyin đúng của từ: "+x[0],answer:x[1],options:answerOptions(x[1],w.map(y=>y[1]))}));
- choose(g,5).forEach(x=>{let example=String(x[5]||"").split(/\r?\n/).filter(Boolean)[0]||x[1];out.push({part:"Ngữ pháp",prompt:"Cấu trúc ngữ pháp phù hợp với ví dụ sau là gì?\n"+example,answer:x[1],options:answerOptions(x[1],g.map(y=>y[1]))})});
- choose(p,5).forEach(x=>out.push({part:"Nghe hiểu",prompt:"Nghe câu tiếng Trung rồi chọn nghĩa đúng.",audio:x[0],answer:x[2],options:answerOptions(x[2],PHRASES.map(y=>y[2]))}));
- choose(READING_BANK[n].qs,5).forEach(x=>out.push({part:"Đọc hiểu",prompt:READING_BANK[n].text+"\n\n"+x[0],answer:x[2],options:mix(x[1])}));
- choose(p,5).forEach(x=>out.push({part:"Hiểu & vận dụng",prompt:"Bạn muốn diễn đạt ý sau bằng tiếng Trung:\n"+x[2],answer:x[0],options:answerOptions(x[0],PHRASES.map(y=>y[0]))}));
- return out;
-}
-function startExam(){if(!levelReady(level)){toast("Bạn cần hoàn thành nội dung HSK "+level+" trước khi thi.");return}examQuestions=buildExam();examIndex=0;examAnswers=[];openTab("exam");renderExamQuestion()}
-function renderExamQuestion(){
- let q=examQuestions[examIndex];$("examBody").innerHTML='<div class="exam-meta"><b>'+q.part+'</b><span>Câu '+(examIndex+1)+'/25</span></div><div class="progress"><span style="width:'+examIndex*4+'%"></span></div><h3>'+esc(q.prompt).replace(/\n/g,"<br>")+'</h3>'+(q.audio?'<button class="btn light" id="examAudio">🔊 Nghe lại</button>':'')+'<div class="answer-grid">'+q.options.map((o,i)=>'<button class="answer-option" data-choice="'+i+'">'+esc(o)+'</button>').join("")+'</div>';
- $("examBody").querySelectorAll("[data-choice]").forEach(b=>b.onclick=()=>{examAnswers.push({q,chosen:q.options[+b.dataset.choice],ok:q.options[+b.dataset.choice]===q.answer});examIndex++;if(examIndex<examQuestions.length)renderExamQuestion();else finishExam()});
- if($("examAudio"))$("examAudio").onclick=()=>speak(q.audio);
-}
-function finishExam(){
- let total=examAnswers.length,correct=examAnswers.filter(x=>x.ok).length,score=Math.round(correct/total*100),parts=["Từ vựng","Ngữ pháp","Nghe hiểu","Đọc hiểu","Hiểu & vận dụng"],stats=parts.map(part=>{let a=examAnswers.filter(x=>x.q.part===part),c=a.filter(x=>x.ok).length;return{part,c,total:a.length,score:Math.round(c/a.length*100)}}),passed=score>=80&&stats.every(x=>x.score>=60);
- db.examResults[level]={score,passed,date:new Date().toISOString(),stats};if(passed){db.xp+=100;activity("exam")}save();renderHome();
- $("examBody").innerHTML='<div class="exam-result"><div class="eyebrow">KẾT QUẢ HSK '+level+'</div><div class="exam-score">'+score+'%</div><h3>'+(passed?"Chúc mừng! Bạn đã vượt qua HSK "+level:"Chưa đạt yêu cầu · hãy ôn tập và thi lại")+'</h3><p>'+correct+'/25 câu đúng. Điều kiện: tổng điểm từ 80% và mỗi phần ít nhất 60%.</p><div class="exam-breakdown">'+stats.map(x=>'<div><span>'+x.part+'</span><b>'+x.c+'/'+x.total+' · '+x.score+'%</b></div>').join("")+'</div>'+(passed&&level<6?'<button class="btn" id="unlockNext">Mở khóa HSK '+(level+1)+' →</button>':'<button class="btn" id="retryExam">Thi lại →</button>')+'<button class="btn light" id="wrongAnswers">Xem câu sai</button></div>';
- $("unlockNext")?.addEventListener("click",()=>{setLevel(level+1);openTab("home")});$("retryExam")?.addEventListener("click",startExam);
- $("wrongAnswers")?.addEventListener("click",()=>{$("examBody").innerHTML='<h3>Câu cần ôn lại</h3>'+examAnswers.filter(x=>!x.ok).map(x=>'<article class="grammar-item"><b>'+x.q.part+'</b><p>'+esc(x.q.prompt)+'</p><p class="muted">Bạn chọn: '+esc(x.chosen)+'</p><p class="evaluation ok">Đáp án: '+esc(x.q.answer)+'</p></article>').join("")+'<button class="btn" id="backExamResult">Quay lại kết quả</button>'; $("backExamResult").onclick=finishExam});
-}
 function openTab(id){
  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
  $("pageTitle").textContent=({home:"Tổng quan",vocab:"Từ vựng HSK "+level,grammar:"Ngữ pháp HSK "+level,phrases:"Mẫu câu giao tiếp",listening:"Luyện nghe hiểu",speaking:"Luyện nói & phản xạ",review:"Ôn tập thông minh",exam:"Thi tổng kết HSK "+level})[id]||"Chinese Daily";if(id==="review")renderReview();window.scrollTo({top:0,behavior:"smooth"});
