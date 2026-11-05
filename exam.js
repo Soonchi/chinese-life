@@ -181,7 +181,8 @@ function finishExam(auto=false){
  let correct=examAnswers.filter(x=>x?.ok).length,total=examQuestions.length,score=Math.round(correct/Math.max(1,total)*100),passed=score>=cfg.pass;
  let scoreMax=cfg.writing?300:200,scoreRaw=Math.round(score/100*scoreMax),required=Math.round(cfg.pass/100*scoreMax);
  let previous=db.examResults?.[level],firstPass=passed&&!previous?.passed;
- db.examResults=db.examResults||{};db.examResults[level]={score,passed,date:new Date().toISOString(),stats,total,correct,scoreRaw,scoreMax,minutes:cfg.minutes};
+ const bestScore=Math.max(score,Number(previous?.score)||0),everPassed=passed||!!previous?.passed;
+ db.examResults=db.examResults||{};db.examResults[level]={score:bestScore,lastScore:score,passed:everPassed,date:new Date().toISOString(),stats,total,correct,scoreRaw,scoreMax,minutes:cfg.minutes};
  if(firstPass){db.examRewards=db.examRewards||{};if(!db.examRewards[level]){db.xp=(db.xp||0)+100;db.examRewards[level]=true;activity("exam")}}
  save();renderHome();
  $("examBody").innerHTML='<div class="exam-result"><div class="eyebrow">KẾT QUẢ THI THỬ HSK '+level+'</div><div class="exam-score">'+score+'%</div><h3>'+(passed?"ĐẠT MỐC ĐIỂM THI THỬ":"CHƯA ĐẠT · CẦN ÔN TẬP THÊM")+'</h3><p><b>'+correct+'/'+total+' câu / nhiệm vụ đạt.</b> Điểm mô phỏng: '+scoreRaw+'/'+scoreMax+' · Mốc mục tiêu: '+required+'/'+scoreMax+'. '+(auto?"Bài thi đã tự động nộp khi hết giờ.":"")+'</p><div class="exam-breakdown">'+stats.map(x=>'<div><span>'+x.section+'</span><b>'+x.correct+'/'+x.total+' · '+x.score+'%</b></div>').join("")+'</div><p class="muted">Đây là điểm luyện tập, không phải điểm CTI. Phần viết tự luận được tự đánh giá; bài viết chưa được AI/chuyên gia chấm.</p>'+(passed&&level<6?'<button class="btn" id="unlockNext">Mở khóa HSK '+(level+1)+' →</button>':'<button class="btn" id="retryExam">Thi lại →</button>')+'<button class="btn light" id="wrongAnswers">Xem đáp án / câu cần ôn</button></div>';
