@@ -81,7 +81,7 @@ function buildConversation(d){
  }else{
   follow=[{q:"你能多说一点吗？",hint:"Bổ sung thêm một chi tiết hoặc ví dụ。",answer:"我觉得这件事很重要，因为它对我有帮助。",groups:[["觉得","认为"],["重要","有帮助"],["因为","对"]]},{q:"你为什么这样想？",hint:"Giải thích ngắn gọn lý do hoặc quan điểm của bạn。",answer:"因为我有过类似的经历，所以我这样认为。",groups:[["因为","所以"],["经历","经验"],["认为","觉得"]]}];
  }
- return [{q:d[1],hint:d[2],answer:d[3],groups:(d[4]||[]).map(k=>Array.isArray(k)?k:[k])},...follow,{q:"你还想补充什么？",hint:"Kết thúc hội thoại bằng một ý bổ sung ngắn。",answer:"我觉得坚持练习很重要，以后我会继续努力。",groups:[["觉得","认为"],["坚持","继续"],["练习","努力","重要"]]}];
+ return [{q:d[1],hint:d[2],answer:d[3],groups:(d[4]||[]).map(k=>Array.isArray(k)?k:[k])},follow[0],{q:"你还想补充什么？",hint:"Kết thúc hội thoại bằng một ý bổ sung ngắn。",answer:"我觉得坚持练习很重要，以后我会继续努力。",groups:[["觉得","认为"],["坚持","继续"],["练习","努力","重要"]]}];
 }
 function renderConversation(){
  if(!conversation)return;
@@ -115,29 +115,48 @@ function nextDialog(){
 function playDialog(){if(conversation&&!conversation.done)speak(conversation.turns[conversation.index].q,.9)}
 function playSampleAnswer(){if(conversation)speak(conversation.turns[conversation.index].answer,.85)}
 function clearSpeakingAnswer(){$("answerInput").value="";$("dialogResult").textContent="";$("speechScore").textContent="";$("speechStatus").textContent="Đã xóa câu trả lời. Thử nói lại nhé."}
+function analyzeSpeakingAnswer(t,turn){
+ const raw=String(t||"").trim(),clean=raw.replace(/[，。！？、；：,.!?;:'"“”‘’（）()\s]/g,""),normalized=norm(clean);
+ const groups=turn.groups||[],matched=groups.filter(g=>g.some(k=>normalized.includes(norm(k))));
+ const missing=groups.filter(g=>!g.some(k=>normalized.includes(norm(k)))).map(g=>g[0]);
+ const coverage=groups.length?Math.round(matched.length/groups.length*100):100;
+ const chars=Array.from(clean).length,reference=norm(String(turn.answer||"").replace(/[，。！？、；：,.!?;:'"“”‘’（）()\s]/g,""));
+ const copied=!!reference&&normalized===reference;
+ const patterns=[["因为","所以","因果"],["虽然","但是","nhượng bộ"],["如果","就","điều kiện"],["不但","而且","bổ sung"],["先","然后","trình tự"],["一边","一边","hai hành động song song"],["比",null,"so sánh"],["把",null,"cấu trúc 把"],["被",null,"cấu trúc 被"],["了",null,"thể hoàn thành/biến đổi"],["过",null,"kinh nghiệm"],["着",null,"trạng thái"]];
+ const detected=patterns.filter(p=>p[1]?normalized.includes(p[0])&&normalized.includes(p[1]):normalized.includes(p[0])).map(p=>p[2]);
+ const lengthLabel=chars<5?"Rất ngắn":chars<10?"Ngắn":chars<25?"Vừa đủ":"Chi tiết";
+ const feedback=coverage>=70?"Bạn đã diễn đạt được phần lớn ý chính.":coverage>=40?"Bạn đã nắm được một phần nội dung, hãy bổ sung ý còn thiếu.":"Câu trả lời chưa bám đủ các ý chính. Hãy thử diễn đạt lại bằng câu đơn giản.";
+ const tips=[];
+ if(missing.length)tips.push("Bổ sung ý: "+missing.join("、"));
+ if(chars<8)tips.push("Thử nói dài hơn bằng cách thêm chủ ngữ, thời gian, hành động hoặc lý do.");
+ if(copied)tips.push("Bạn đang lặp lại nguyên câu mẫu. Hãy thử thay thông tin bằng trải nghiệm của mình.");
+ if(!tips.length)tips.push("Thử thêm một chi tiết hoặc ví dụ thực tế để câu trả lời tự nhiên hơn.");
+ const score=Math.max(0,Math.min(100,Math.round(coverage*.8+Math.min(chars,20))));
+ return {coverage,score,matched:matched.map(g=>g[0]),missing,chars,lengthLabel,detected,copied,tips,feedback};
+}
 function evaluateAnswer(t){
  if(!conversation||conversation.done||!String(t||"").trim()){$("speechStatus").textContent="Hãy nói hoặc nhập câu trả lời trước khi kiểm tra.";return}
- const turn=conversation.turns[conversation.index],groups=turn.groups,normalized=norm(t),matched=groups.filter(g=>g.some(k=>normalized.includes(norm(k))));
- const hit=matched.length,pct=groups.length?Math.round(hit/groups.length*100):0,ok=hit>=Math.min(2,groups.length)&&pct>=40,missing=groups.filter(g=>!g.some(k=>normalized.includes(norm(k)))).map(g=>g[0]);
- const feedback=ok?"Bạn đã trả lời được các ý chính. Tiếp tục nhé!":"Câu trả lời còn thiếu một vài ý. Đừng ngại, hãy xem gợi ý rồi tiếp tục.";
- conversation.history.push({q:turn.q,a:t,pct,feedback});
- $("speechScore").textContent="Lượt "+(conversation.index+1)+": khớp "+pct+"% nhóm từ khóa.";
- $("dialogResult").innerHTML='<div class="evaluation '+(ok?"ok":"try")+'">'+feedback+'</div><p class="muted">Đã nhận diện: '+(matched.length?matched.map(g=>esc(g[0])).join(" · "):"Chưa nhận diện được")+'</p><p class="muted">Có thể bổ sung: '+(missing.length?missing.map(esc).join(" · "):"Bạn đã bao quát các ý chính")+'</p><div class="sample-answer"><span class="muted">Câu trả lời tham khảo</span><b>'+esc(turn.answer)+'</b><button class="btn light" type="button" onclick="playSampleAnswer()">🔊 Nghe câu mẫu</button></div><p class="muted">Phản hồi dựa trên từ khóa/cụm từ, không phải chấm ngữ pháp hoặc phát âm bằng AI.</p>';
+ const turn=conversation.turns[conversation.index],a=analyzeSpeakingAnswer(t,turn),ok=a.coverage>=40,feedback=a.feedback;
+ conversation.history.push({q:turn.q,a:t,pct:a.coverage,feedback,score:a.score});
+ const grammar=a.detected.length?a.detected.join(" · "):"Chưa phát hiện mẫu câu nổi bật";
+ const analysis='<section class="tutor-analysis"><div class="tutor-metrics"><div><b>'+a.coverage+'%</b><span>Ý chính</span></div><div><b>'+a.chars+'</b><span>Chữ Hán</span></div><div><b>'+esc(a.lengthLabel)+'</b><span>Độ dài</span></div></div><p><b>Đã nhận diện:</b> '+(a.matched.length?a.matched.map(esc).join(" · "):"Chưa nhận diện được ý chính")+'</p><p><b>Mẫu câu nhận diện:</b> '+esc(grammar)+'</p><ul>'+a.tips.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul></section>';
+ $("speechScore").textContent="Điểm luyện tập "+a.score+"/100 · Ý chính "+a.coverage+"% · "+a.chars+" chữ Hán.";
+ $("dialogResult").innerHTML='<div class="evaluation '+(ok?"ok":"try")+'">'+feedback+'</div>'+analysis+'<div class="sample-answer"><span class="muted">Câu tham khảo để đối chiếu</span><b>'+esc(turn.answer)+'</b><button class="btn light" type="button" onclick="playSampleAnswer()">🔊 Nghe câu mẫu</button></div><p class="muted">Đánh giá chạy offline theo nhóm ý, độ dài và một số mẫu câu nhận diện được; không phải mô hình AI hiểu ngữ nghĩa hoặc chấm phát âm.</p>';
  conversation.index++;
  if(conversation.index>=conversation.turns.length){
-  conversation.done=true;
-  awardXP("conversation:"+DIALOGS.indexOf(dialog),12);activity("speak");save();renderHome();
-  $("conversationProgress").textContent="Đã hoàn thành 3/3 lượt";
+  conversation.done=true;awardXP("conversation:"+DIALOGS.indexOf(dialog),12);activity("speak");save();renderHome();
+  $("conversationProgress").textContent="Đã hoàn thành "+conversation.turns.length+"/"+conversation.turns.length+" lượt";
   $("conversationBar").style.width="100%";
-  $("conversationHistory").innerHTML=conversation.history.map((x,i)=>'<div class="chat-pair"><div class="chat-bubble bot"><span>AI · '+(i+1)+'</span><p>'+esc(x.q)+'</p></div><div class="chat-bubble user"><span>BẠN</span><p>'+esc(x.a)+'</p><small>Khớp ý chính: '+x.pct+'%</small></div><div class="chat-feedback">'+esc(x.feedback)+'</div></div>').join("");
-  $("dialogQuestion").textContent="对话完成！做得好！";$("dialogHint").textContent="Bạn đã hoàn thành cuộc hội thoại 3 lượt.";
+  $("conversationHistory").innerHTML=conversation.history.map((x,i)=>'<div class="chat-pair"><div class="chat-bubble bot"><span>AI · '+(i+1)+'</span><p>'+esc(x.q)+'</p></div><div class="chat-bubble user"><span>BẠN</span><p>'+esc(x.a)+'</p><small>Khớp ý chính: '+x.pct+'% · '+x.score+'/100</small></div><div class="chat-feedback">'+esc(x.feedback)+'</div></div>').join("");
+  $("dialogQuestion").textContent="对话完成！做得好！";$("dialogHint").textContent="Bạn đã hoàn thành cuộc hội thoại "+conversation.turns.length+" lượt.";
   $("answerInput").disabled=true;$("micButton").disabled=true;$("speechStatus").textContent="Đã kết thúc phiên. Chọn tình huống khác để luyện tiếp.";
-  $("speechScore").textContent="Hoàn thành 3/3 lượt · +12 XP nếu chưa nhận điểm hôm nay.";
+  $("speechScore").textContent="Hoàn thành "+conversation.turns.length+"/"+conversation.turns.length+" lượt · +12 XP nếu chưa nhận điểm hôm nay.";
  }else{
   renderConversation();
-  $("dialogResult").innerHTML='<div class="evaluation '+(ok?"ok":"try")+'">'+feedback+'</div><p class="muted">Câu trả lời tham khảo: <b>'+esc(turn.answer)+'</b></p>';
+  $("dialogResult").innerHTML='<div class="evaluation '+(ok?"ok":"try")+'">'+feedback+'</div>'+analysis+'<div class="sample-answer"><span class="muted">Câu tham khảo</span><b>'+esc(turn.answer)+'</b></div>';
  }
 }
+
 function recordAnswer(){
  if(activeRecognition){try{activeRecognition.stop();$("speechStatus").textContent="Đã dừng ghi âm."}catch{}return}
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
