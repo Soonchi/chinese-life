@@ -10,7 +10,7 @@ function localDay(){const d=new Date();return d.getFullYear()+"-"+String(d.getMo
 function awardXP(key,amount){db.xpClaims=db.xpClaims||{};const day=localDay();db.xpClaims[day]=db.xpClaims[day]||{};if(db.xpClaims[day][key])return false;db.xpClaims[day][key]=true;db.xp=(db.xp||0)+amount;for(const k of Object.keys(db.xpClaims)){if(Date.now()-new Date(k+"T00:00:00").getTime()>30*86400000)delete db.xpClaims[k]}return true}
 function speak(t,rate=1){if(!("speechSynthesis"in window)){toast("Thiết bị không hỗ trợ đọc.");return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="zh-CN";u.rate=rate;const vs=speechSynthesis.getVoices();u.voice=vs.find(v=>/^zh/i.test(v.lang))||null;speechSynthesis.speak(u)}
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
-function setLevel(n){level=n;db.level=n;wi=0;listenDeck=[];save();$("levelSelect").value=n;renderWords();renderGrammar();renderHome();nextListening()}
+function setLevel(n){level=n;db.level=n;wi=0;listenDeck=[];save();$("levelSelect").value=n;renderWords();renderGrammar();renderHome();nextListening();nextDialog()}
 function getWords(){return VOCAB.filter(w=>$("cumulative").checked?w[3]<=level:(level>=7?w[3]===7:w[3]===level))}
 function cursorKey(){return level+":"+( $("cumulative").checked?"all":"level")}
 function visibleWords(){let a=getWords(),mode=$("wordStatusFilter")?.value||"new";if(mode==="new")a=a.filter(w=>!db.words[w[0]]?.status);else if(mode==="again")a=a.filter(w=>db.words[w[0]]?.status==="again");else if(mode==="known")a=a.filter(w=>db.words[w[0]]?.status==="known");return a}
