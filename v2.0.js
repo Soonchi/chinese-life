@@ -16,19 +16,34 @@ function cursorKey(){return level+":"+( $("cumulative").checked?"all":"level")}
 function visibleWords(){let a=getWords(),mode=$("wordStatusFilter")?.value||"new";if(mode==="new")a=a.filter(w=>!db.words[w[0]]?.status);else if(mode==="again")a=a.filter(w=>db.words[w[0]]?.status==="again");else if(mode==="known")a=a.filter(w=>db.words[w[0]]?.status==="known");return a}
 function renderWordProgress(){let a=getWords(),known=a.filter(w=>db.words[w[0]]?.status==="known").length,again=a.filter(w=>db.words[w[0]]?.status==="again").length,newCount=a.length-known-again;$("wordProgress").textContent="Mới "+newCount.toLocaleString("vi-VN")+" · Đã nhớ "+known.toLocaleString("vi-VN")+" · Cần ôn "+again.toLocaleString("vi-VN")}
 function renderWords(preferredKey){let q=norm($("wordSearch").value),pos=$("posFilter").value,base=getWords();filtered=visibleWords().filter(w=>(!q||norm(w.slice(0,3).join(" ")).includes(q))&&(!pos||w[2].includes(pos)));renderWordProgress();$("wordTotal").textContent=filtered.length.toLocaleString("vi-VN")+" từ";if(!filtered.length){$("wordList").innerHTML='<div class="empty">'+(($("wordStatusFilter").value==="new")?"Đã học hết các từ mới trong phạm vi này. Chuyển sang “Chưa nhớ · cần ôn” để ôn lại nhé.":"Không tìm thấy từ.")+'</div>';$("wordCard").classList.add("hide");current=null;return}$("wordCard").classList.remove("hide");let last=preferredKey||db.vocabCursor?.[cursorKey()]||"";let exact=filtered.findIndex(w=>w[0]===last);if(exact>=0)wi=exact;else if(last){let oldIndex=base.findIndex(w=>w[0]===last),next=oldIndex<0?-1:filtered.findIndex(w=>base.findIndex(x=>x[0]===w[0])>oldIndex);wi=next>=0?next:Math.min(wi,filtered.length-1)}else wi=0;wi=Math.max(0,Math.min(wi,filtered.length-1));let listStart=Math.max(0,Math.min(wi-20,filtered.length-100)),shown=filtered.slice(listStart,listStart+100);$("wordList").innerHTML=shown.map((w,i)=>'<button class="word-row '+(i+listStart===wi?"selected":"")+'" data-i="'+(i+listStart)+'"><b>'+esc(w[0])+'</b><span>'+esc(w[1])+'</span><small>'+(w[3]>=7?'HSK 7–9':'HSK '+w[3])+'</small></button>').join("")+(filtered.length>100?'<p class="muted">Đang hiển thị '+(listStart+1)+'–'+Math.min(listStart+100,filtered.length)+' / '+filtered.length+' từ.</p>':"");$("wordList").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{wi=+b.dataset.i;showWord(filtered[wi]);$("wordList").querySelectorAll(".word-row").forEach(x=>x.classList.toggle("selected",x===b))});showWord(filtered[wi])}
-function showWord(w){if(!w)return;current=w;db.vocabCursor=db.vocabCursor||{};db.vocabCursor[cursorKey()]=w[0];save();$("wordCard").classList.remove("is-flipped");$("wordHanzi").textContent=w[0].replace(/[0-9]+$/,"");$("wordPinyin").textContent=w[1];$("wordPos").textContent=(w[2]||"Từ vựng")+" · "+(w[3]>=7?"HSK 7–9":"HSK "+w[3]);$("wordState").textContent=db.words[w[0]]?.status==="known"?"Đã thuộc tốt":db.words[w[0]]?.status==="again"?"Chưa thuộc lắm · cần ôn":"Chưa đánh dấu";$("wordMeaning").textContent=MEANINGS.get(w[0]+"|"+w[1])||"Chưa có nghĩa đã đối chiếu cho từ này."}
+function showWord(w){if(!w)return;const card=$("wordCard");card?.classList.remove("is-dragging","swipe-good","swipe-again");if(card){card.style.removeProperty("--drag-x");card.style.removeProperty("--drag-rotate")}current=w;db.vocabCursor=db.vocabCursor||{};db.vocabCursor[cursorKey()]=w[0];save();$("wordCard").classList.remove("is-flipped");$("wordHanzi").textContent=w[0].replace(/[0-9]+$/,"");$("wordPinyin").textContent=w[1];$("wordPos").textContent=(w[2]||"Từ vựng")+" · "+(w[3]>=7?"HSK 7–9":"HSK "+w[3]);$("wordState").textContent=db.words[w[0]]?.status==="known"?"Đã thuộc tốt":db.words[w[0]]?.status==="again"?"Chưa thuộc lắm · cần ôn":"Chưa đánh dấu";$("wordMeaning").textContent=MEANINGS.get(w[0]+"|"+w[1])||"Chưa có nghĩa đã đối chiếu cho từ này."}
 function flipWordCard(){if(!$("wordCard")||!current)return;$("wordCard").classList.toggle("is-flipped")}
 function bindFlashcardGestures(){
  const card=$("wordCard");if(!card||card.dataset.gesturesBound)return;card.dataset.gesturesBound="1";
- let start=null;
+ let start=null,locked=false;
  const face=e=>e.target.closest(".flashcard-face");
- card.addEventListener("pointerdown",e=>{if(!face(e))return;start={x:e.clientX,y:e.clientY,id:e.pointerId}});
+ const reset=()=>{card.classList.remove("is-dragging");card.style.removeProperty("--drag-x");card.style.removeProperty("--drag-rotate")};
+ card.addEventListener("pointerdown",e=>{
+  if(!face(e)||locked)return;
+  start={x:e.clientX,y:e.clientY,id:e.pointerId};card.classList.add("is-dragging");
+  try{card.setPointerCapture(e.pointerId)}catch(_){}
+ });
+ card.addEventListener("pointermove",e=>{
+  if(!start||e.pointerId!==start.id)return;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y;
+  if(Math.abs(dx)>Math.abs(dy)*1.1){card.style.setProperty("--drag-x",dx+"px");card.style.setProperty("--drag-rotate",Math.max(-13,Math.min(13,dx/22))+"deg")}
+ });
  card.addEventListener("pointerup",e=>{
-  if(!start)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;
-  if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.25){rateWord(dx>0?"good":"again");return}
+  if(!start||e.pointerId!==start.id)return;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;
+  if(Math.abs(dx)>58&&Math.abs(dx)>Math.abs(dy)*1.2){
+   locked=true;card.classList.remove("is-dragging");card.classList.add(dx>0?"swipe-good":"swipe-again");
+   setTimeout(()=>{reset();card.classList.remove("swipe-good","swipe-again");locked=false;rateWord(dx>0?"good":"again")},210);return;
+  }
+  reset();
   if(Math.abs(dx)<14&&Math.abs(dy)<14&&face(e))flipWordCard();
  });
- card.addEventListener("pointercancel",()=>{start=null});
+ card.addEventListener("pointercancel",()=>{start=null;reset()});
  card.querySelectorAll(".flashcard-face").forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flipWordCard()}}));
 }
 function translateWord(w){const entry=current?.[0]===w?current:VOCAB.find(x=>x[0]===w);const meaning=entry?MEANINGS.get(entry[0]+"|"+entry[1]):"";$("wordMeaning").textContent=meaning||"Chưa có nghĩa đã đối chiếu cho từ này."}
