@@ -80,3 +80,38 @@
 @keyframes flashcardThrowLeft{to{transform:translate(-115%, -8px) rotate(-13deg);opacity:0}}
 @keyframes flashcardFaceIn{from{opacity:.35;transform:translateY(9px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){.flashcard,.flashcard-face,.flashcard::after{animation:none!important;transition:none!important}}
+
+/* Quizlet-like distraction-free vocabulary mode */
+body.vocab-focus .hero,body.vocab-focus .nav{display:none!important}
+body.vocab-focus .section-head{max-width:760px;margin:5px auto 10px;padding:0 10px}
+body.vocab-focus .section-head h2{display:none}
+body.vocab-focus .section-head .sub{margin-left:auto;font-size:12px}
+body.vocab-focus #vocab{max-width:760px;margin:0 auto;padding:0 10px 30px}
+.vocab-focus-head{display:flex;align-items:center;gap:12px;max-width:650px;margin:8px auto 18px}
+.vocab-back,.vocab-resume{width:38px;height:38px;border:0;border-radius:50%;background:var(--soft,#eef2f8);font-size:24px;color:var(--blue);cursor:pointer}
+.vocab-focus-head>div{display:flex;flex:1;flex-direction:column;gap:3px}
+.vocab-focus-head strong{font-size:10px;letter-spacing:.16em;color:var(--muted)}
+.vocab-focus-head #wordProgress{font-size:12px}
+.vocab-focus-head #wordTotal{font-size:11px;white-space:nowrap}
+.vocab-resume{border:1px solid var(--line);background:#fff;font-size:20px}
+.vocab-options{max-width:650px;margin:0 auto 14px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.vocab-options summary{padding:10px 14px;font-size:12px;font-weight:750;color:var(--muted);cursor:pointer}
+.vocab-options[open] summary{border-bottom:1px solid var(--line)}
+.vocab-options .toolbar{padding:12px;display:flex;flex-wrap:wrap;gap:8px}
+body.vocab-focus .vocab-layout{display:block;max-width:650px;margin:0 auto}
+body.vocab-focus #wordList{display:none!important}
+body.vocab-focus .flashcard{min-height:clamp(410px,62vh,560px);padding:26px 22px;border:1px solid #e6eaf2;border-radius:24px;background:#fff;box-shadow:0 14px 45px #25385812;gap:15px}
+body.vocab-focus .flashcard-face{min-height:260px;border:0;border-radius:18px}
+body.vocab-focus .flashcard-front{background:linear-gradient(145deg,#f7f9ff,#eef3ff)}
+body.vocab-focus .flashcard-back{background:linear-gradient(145deg,#f5fbf7,#edf8f1)}
+body.vocab-focus .flashcard-front .hanzi{font-size:clamp(76px,13vw,112px);letter-spacing:.04em}
+body.vocab-focus .flashcard-back .pinyin{font-size:clamp(24px,4vw,30px);margin:0 0 12px}
+body.vocab-focus .flashcard-back .meaning{font-size:clamp(22px,3.5vw,28px)}
+body.vocab-focus .flashcard-label{font-size:10px;letter-spacing:.16em}
+body.vocab-focus .flashcard-state{font-size:11px;min-height:12px;opacity:.65}
+body.vocab-focus .flashcard-controls{gap:12px}
+body.vocab-focus .flashcard-controls .btn{min-height:48px;border-radius:13px;padding:12px 16px}
+body.vocab-focus .flashcard-controls .btn.light,body.vocab-focus .flashcard .actions{display:none}
+body.vocab-focus .flashcard-controls .btn.red,body.vocab-focus .flashcard-controls .btn.green{flex:1;max-width:230px}
+body.vocab-focus .flashcard-swipe-hint{max-width:410px;margin:0 auto;font-size:11px;opacity:.75}
+@media(max-width:640px){body.vocab-focus #app{padding:8px 14px calc(28px + env(safe-area-inset-bottom))}body.vocab-focus .flashcard{min-height:min(66vh,560px);padding:18px 14px;border-radius:22px}body.vocab-focus .flashcard-face{min-height:240px}body.vocab-focus .flashcard-controls .btn{font-size:13px;padding:11px 8px;min-width:0}.vocab-focus-head{margin-bottom:12px}}
