@@ -62,3 +62,21 @@
 .flashcard-swipe-hint{display:flex;justify-content:space-between;gap:8px;width:100%;font-size:11px;color:var(--muted)}
 .flashcard .actions{margin-top:2px}
 @media(max-width:640px){.vocab-layout{grid-template-columns:1fr}.word-list{max-height:190px}.flashcard{min-height:360px;padding:14px}.flashcard-face{min-height:205px}.flashcard-controls .btn{flex:1;min-width:130px}.flashcard-swipe-hint{font-size:10px}}
+
+/* Flashcard motion polish */
+.flashcard{isolation:isolate;perspective:1100px;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s;will-change:transform}
+.flashcard::after{content:"";position:absolute;z-index:4;inset:12px;border-radius:18px;display:grid;place-items:center;font-size:clamp(22px,5vw,34px);font-weight:900;letter-spacing:.04em;opacity:0;pointer-events:none;transition:opacity .12s}
+.flashcard.is-dragging{transition:none;box-shadow:0 18px 44px #263b651f}
+.flashcard.is-dragging::after{opacity:1}
+.flashcard.is-dragging[style*="--drag-x"]::after{content:""}
+.flashcard.swipe-good{animation:flashcardThrowRight .21s ease-in forwards}
+.flashcard.swipe-again{animation:flashcardThrowLeft .21s ease-in forwards}
+.flashcard.swipe-good::after{content:"✓ ĐÃ THUỘC";color:#16845a;background:#dff7ebd9;border:2px solid #4bb889;opacity:1;transform:rotate(5deg)}
+.flashcard.swipe-again::after{content:"↻ ÔN LẠI";color:#c34a55;background:#fff0f1df;border:2px solid #e58b91;opacity:1;transform:rotate(-5deg)}
+.flashcard-face{transform-origin:center;animation:flashcardFaceIn .28s cubic-bezier(.2,.8,.2,1) both}
+.flashcard.is-flipped .flashcard-back{animation:flashcardFaceIn .3s cubic-bezier(.2,.8,.2,1) both}
+.flashcard:not(.is-flipped) .flashcard-front{animation:flashcardFaceIn .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes flashcardThrowRight{to{transform:translate(115%, -8px) rotate(13deg);opacity:0}}
+@keyframes flashcardThrowLeft{to{transform:translate(-115%, -8px) rotate(-13deg);opacity:0}}
+@keyframes flashcardFaceIn{from{opacity:.35;transform:translateY(9px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.flashcard,.flashcard-face,.flashcard::after{animation:none!important;transition:none!important}}
